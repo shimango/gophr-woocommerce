@@ -37,7 +37,7 @@ if (file_exists(GOPHR_SAME_DAY_PATH . 'vendor/autoload.php')) {
 /**
  * Prevent direct instantiation of the main class outside this file.
  */
-if (!class_exists('GophrSameDay\\Plugin')) {
+if (!class_exists('GophrSameDay\Plugin')) {
     /**
      * Main plugin class
      */
@@ -86,19 +86,27 @@ if (!class_exists('GophrSameDay\\Plugin')) {
             add_action('admin_enqueue_scripts', [$this, 'enqueueAdminAssets']);
 
             // In setupHooks() method:
-            add_action('admin_menu', function () { new \GophrSameDay\Admin\SettingsPage(); });
+            add_action('admin_menu', [$this, 'addMenuPage']);
 
             // WooCommerce
             add_action('woocommerce_shipping_init', [$this, 'gophrShippingInit']);
             add_filter('woocommerce_shipping_methods', [$this, 'addGophrShippingMethod']);
         }
 
+        public function addMenuPage(): void
+        {
+            if (!class_exists('GophrSameDay\Admin\SettingsPage')) {
+                require_once GOPHR_SAME_DAY_PATH . 'src/Admin/SettingsPage.php';
+            }
+        }
+
         /**
          * Initialize the shipping method.
          */
-        public function gophrShippingInit() {
-            if (!class_exists('GophrSameDay\\Core\\Shipping')) {
-                require_once GOPHR_SAME_DAY_PATH . 'src/Core/Shipping.php';
+        public function gophrShippingInit(): void
+        {
+            if (!class_exists('GophrSameDay\Integration\GophrShippingMethod')) {
+                require_once GOPHR_SAME_DAY_PATH . 'src/Integration/GophrShippingMethod.php';
             }
         }
 
@@ -106,8 +114,9 @@ if (!class_exists('GophrSameDay\\Plugin')) {
         /**
          * Add the shipping method to WooCommerce.
          */
-        public function addGophrShippingMethod($methods) {
-            $methods['your_delivery'] = 'GophrSameDay\\Core\\Shipping';
+        public function addGophrShippingMethod(array $methods): array
+        {
+            $methods['your_delivery'] = 'GophrSameDay\Integration\Shipping';
             return $methods;
         }
 

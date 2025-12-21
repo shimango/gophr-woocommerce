@@ -1,10 +1,10 @@
 <?php
-namespace GophrSameDay\Core;
+namespace GophrSameDay\Integration;
 
 use WC_Shipping_Method;
 
-class Shipping extends WC_Shipping_Method {
-
+class GophrShippingMethod extends WC_Shipping_Method
+{
     /**
      * Constructor.
      */
@@ -13,10 +13,10 @@ class Shipping extends WC_Shipping_Method {
         $this->instance_id = absint($instance_id);
         $this->method_title = __('Gophr Same-Day Delivery', 'gophr-same-day');
         $this->method_description = __('Custom shipping via Gophr API', 'gophr-same-day');
-        $this->supports = array('shipping-zones', 'instance-settings');
+        $this->supports = ['shipping-zones', 'instance-settings'];
         $this->init();
 
-        add_action('woocommerce_order_status_processing', array($this, 'create_delivery_job'), 10, 1); // Or use 'woocommerce_checkout_order_processed' for immediate creation.
+        add_action('woocommerce_order_status_processing', [$this, 'create_delivery_job'], 10, 1); // Or use 'woocommerce_checkout_order_processed' for immediate creation.
 
         parent::__construct($instance_id);
     }
@@ -35,59 +35,59 @@ class Shipping extends WC_Shipping_Method {
         $this->api_endpoint_create = $this->get_option('api_endpoint_create', 'https://yourapi.com/create-job'); // Your create job endpoint.
         $this->api_key = $this->get_option('api_key', ''); // API key for authentication.
 
-        add_action('woocommerce_update_options_shipping_' . $this->id, array($this, 'process_admin_options'));
+        add_action('woocommerce_update_options_shipping_' . $this->id, [$this, 'process_admin_options']);
     }
 
     /**
      * Admin settings fields.
      */
     public function init_form_fields() {
-        $this->form_fields = array(
-            'enabled' => array(
+        $this->form_fields = [
+            'enabled' => [
                 'title' => __('Enable/Disable', 'gophr-same-day'),
                 'type' => 'checkbox',
                 'label' => __('Enable Gophr Same-Day Delivery', 'gopphr-same-day'),
                 'default' => 'yes',
-            ),
-            'title' => array(
+            ],
+            'title' => [
                 'title' => __('Method Title', 'gophr-same-day'),
                 'type' => 'text',
                 'description' => __('Title shown in checkout', 'gopphr-same-day'),
                 'default' => __('Gophr Same-Day Delivery', 'gopphr-same-day'),
                 'desc_tip' => true,
-            ),
-            'api_endpoint_quote' => array(
+            ],
+            'api_endpoint_quote' => [
                 'title' => __('Quote API Endpoint', 'gopphr-same-day'),
                 'type' => 'text',
                 'description' => __('URL for getting delivery quotes', 'gopphr-same-day'),
                 'default' => 'https://yourapi.com/quote',
                 'desc_tip' => true,
-            ),
-            'api_endpoint_create' => array(
+            ],
+            'api_endpoint_create' => [
                 'title' => __('Create Job API Endpoint', 'gopphr-same-day'),
                 'type' => 'text',
                 'description' => __('URL for creating delivery jobs', 'gopphr-same-day'),
                 'default' => 'https://yourapi.com/create-job',
                 'desc_tip' => true,
-            ),
-            'api_key' => array(
+            ],
+            'api_key' => [
                 'title' => __('API Key', 'gopphr-same-day'),
                 'type' => 'password',
                 'description' => __('Your API key for authentication', 'gopphr-same-day'),
                 'default' => '',
                 'desc_tip' => true,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
      * Calculate shipping rate via your API.
      */
-    public function calculate_shipping($package = array()) {
+    public function calculate_shipping($package = []) {
         // // Gather data for quote: dimensions, weight, distance (e.g., from shop to customer address).
          $destination = $package['destination'];
          $total_weight = 0;
-         $dimensions = array(); // Collect per item or aggregate as needed.
+         $dimensions = []; // Collect per item or aggregate as needed.
 
 //         foreach ($package['contents'] as $item) {
 //             $product = $item['data'];
@@ -138,12 +138,12 @@ class Shipping extends WC_Shipping_Method {
         // $cost = isset($body['quote']) ? $body['quote'] : 0; // Adjust based on your API response.
 
         // Add the rate to checkout.
-        $this->add_rate(array(
+        $this->add_rate([
             'id' => $this->id . '_' . $this->instance_id,
             'label' => $this->title,
             'cost' => 50.05, //$cost,
             'package' => $package,
-        ));
+        ]);
     }
 
     // Optional: Implement distance calculation (e.g., using a geolocation API).

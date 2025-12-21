@@ -14,6 +14,10 @@
  * Requires PHP:      8.1
  */
 
+use GophrSameDay\Admin\SettingsPage;
+use GophrSameDay\Integration\GophrShippingMethod;
+
+
 // If this file is called directly, abort.
 defined('ABSPATH') || exit;
 
@@ -91,12 +95,29 @@ if (!class_exists('GophrSameDay\Plugin')) {
             // WooCommerce
             add_action('woocommerce_shipping_init', [$this, 'gophrShippingInit']);
             add_filter('woocommerce_shipping_methods', [$this, 'addGophrShippingMethod']);
+
+            // Register our gophrSettingsInit to the admin_init action hook.
+            add_action( 'admin_init', [$this, 'gophrSettingsInit']);
+
+            // Register our gophrOptionsPage to the admin_menu action hook.
+            add_action( 'admin_menu', [$this, 'gophrOptionsPage']);
+        }
+
+
+        public function gophrOptionsPage(): void
+        {
+            SettingsPage::getInstance()->gophr_same_day_options_page();
+        }
+
+        public function gophrSettingsInit(): void
+        {
+            SettingsPage::getInstance()->wporg_settings_init();
         }
 
         public function addMenuPage(): void
         {
-            if (!class_exists('GophrSameDay\Admin\SettingsPage')) {
-                require_once GOPHR_SAME_DAY_PATH . 'src/Admin/SettingsPage.php';
+            if (!class_exists('GophrSameDay\Admin\MenuPage')) {
+                require_once GOPHR_SAME_DAY_PATH . 'src/Admin/MenuPage.php';
             }
         }
 
@@ -105,9 +126,7 @@ if (!class_exists('GophrSameDay\Plugin')) {
          */
         public function gophrShippingInit(): void
         {
-            if (!class_exists('GophrSameDay\Integration\GophrShippingMethod')) {
-                require_once GOPHR_SAME_DAY_PATH . 'src/Integration/GophrShippingMethod.php';
-            }
+            GophrShippingMethod::getInstance();
         }
 
 
@@ -116,7 +135,7 @@ if (!class_exists('GophrSameDay\Plugin')) {
          */
         public function addGophrShippingMethod(array $methods): array
         {
-            $methods['your_delivery'] = 'GophrSameDay\Integration\Shipping';
+            $methods['your_delivery'] = GophrShippingMethod::class;
             return $methods;
         }
 

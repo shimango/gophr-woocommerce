@@ -1,6 +1,7 @@
 <?php
 namespace GophrSameDay\Integration;
 
+use GophrSameDay\Admin\SettingsPage;
 use WC_Shipping_Method;
 
 class GophrShippingMethod extends WC_Shipping_Method
@@ -19,6 +20,11 @@ class GophrShippingMethod extends WC_Shipping_Method
         add_action('woocommerce_order_status_processing', [$this, 'create_delivery_job'], 10, 1); // Or use 'woocommerce_checkout_order_processed' for immediate creation.
 
         parent::__construct($instance_id);
+    }
+
+    public static function getInstance(): GophrShippingMethod
+    {
+        return new self();
     }
 
     /**
@@ -141,7 +147,7 @@ class GophrShippingMethod extends WC_Shipping_Method
         $this->add_rate([
             'id' => $this->id . '_' . $this->instance_id,
             'label' => $this->title,
-            'cost' => 50.05, //$cost,
+            'cost' => 50.15, //$cost,
             'package' => $package,
         ]);
     }

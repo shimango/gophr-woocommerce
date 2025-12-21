@@ -27,7 +27,7 @@ class ComposerStaticInitf65546148f889c2a34058e2e789512de
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'GophrSameDay\\Admin\\SettingsPage' => __DIR__ . '/../..' . '/src/Admin/SettingsPage.php',
+        'GophrSameDay\\Admin\\MenuPage' => __DIR__ . '/../..' . '/src/Admin/MenuPage.php',
         'GophrSameDay\\Core\\Shipping' => __DIR__ . '/../..' . '/src/Core/Shipping.php',
     );
 

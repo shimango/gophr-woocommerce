@@ -7,6 +7,6 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
-    'GophrSameDay\\Admin\\SettingsPage' => $baseDir . '/src/Admin/SettingsPage.php',
+    'GophrSameDay\\Admin\\MenuPage' => $baseDir . '/src/Admin/SettingsPage.php',
     'GophrSameDay\\Core\\Shipping' => $baseDir . '/src/Core/Shipping.php',
 );

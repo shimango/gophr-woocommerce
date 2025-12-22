@@ -1,7 +1,6 @@
 <?php
-namespace GophrSameDay\Integration;
+namespace Gophr\Woocommerce\Integration;
 
-use GophrSameDay\Admin\SettingsPage;
 use WC_Shipping_Method;
 
 class GophrShippingMethod extends WC_Shipping_Method

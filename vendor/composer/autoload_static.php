@@ -4,22 +4,22 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitf65546148f889c2a34058e2e789512de
+class ComposerStaticInit6f620332c7944bcbbd2172f4b4d4896f
 {
     public static $prefixLengthsPsr4 = array (
         'G' => 
         array (
-            'GophrSameDay\\Tests\\' => 19,
-            'GophrSameDay\\' => 13,
+            'Gophr\\Woocommerce\\Tests\\' => 24,
+            'Gophr\\Woocommerce\\' => 18,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'GophrSameDay\\Tests\\' => 
+        'Gophr\\Woocommerce\\Tests\\' => 
         array (
             0 => __DIR__ . '/../..' . '/tests',
         ),
-        'GophrSameDay\\' => 
+        'Gophr\\Woocommerce\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
         ),
@@ -27,16 +27,19 @@ class ComposerStaticInitf65546148f889c2a34058e2e789512de
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'GophrSameDay\\Admin\\MenuPage' => __DIR__ . '/../..' . '/src/Admin/MenuPage.php',
-        'GophrSameDay\\Core\\Shipping' => __DIR__ . '/../..' . '/src/Core/Shipping.php',
+        'Gophr\\Woocommerce\\Admin\\FormFields' => __DIR__ . '/../..' . '/src/Admin/FormFields.php',
+        'Gophr\\Woocommerce\\Admin\\MenuPage' => __DIR__ . '/../..' . '/src/Admin/MenuPage.php',
+        'Gophr\\Woocommerce\\Admin\\SettingsPage' => __DIR__ . '/../..' . '/src/Admin/SettingsPage.php',
+        'Gophr\\Woocommerce\\Integration\\GophrShippingMethod' => __DIR__ . '/../..' . '/src/Integration/GophrShippingMethod.php',
+        'Gophr\\Woocommerce\\Plugin\\GophrPlugin' => __DIR__ . '/../..' . '/src/Plugin/GophrPlugin.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitf65546148f889c2a34058e2e789512de::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitf65546148f889c2a34058e2e789512de::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitf65546148f889c2a34058e2e789512de::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit6f620332c7944bcbbd2172f4b4d4896f::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit6f620332c7944bcbbd2172f4b4d4896f::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit6f620332c7944bcbbd2172f4b4d4896f::$classMap;
 
         }, null, ClassLoader::class);
     }

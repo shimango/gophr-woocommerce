@@ -1,6 +1,6 @@
 <?php
 
-namespace GophrSameDay\Admin;
+namespace Gophr\Woocommerce\Admin;
 
 class MenuPage
 {

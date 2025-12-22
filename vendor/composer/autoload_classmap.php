@@ -7,6 +7,9 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
-    'GophrSameDay\\Admin\\MenuPage' => $baseDir . '/src/Admin/SettingsPage.php',
-    'GophrSameDay\\Core\\Shipping' => $baseDir . '/src/Core/Shipping.php',
+    'Gophr\\Woocommerce\\Admin\\FormFields' => $baseDir . '/src/Admin/FormFields.php',
+    'Gophr\\Woocommerce\\Admin\\MenuPage' => $baseDir . '/src/Admin/MenuPage.php',
+    'Gophr\\Woocommerce\\Admin\\SettingsPage' => $baseDir . '/src/Admin/SettingsPage.php',
+    'Gophr\\Woocommerce\\Integration\\GophrShippingMethod' => $baseDir . '/src/Integration/GophrShippingMethod.php',
+    'Gophr\\Woocommerce\\Plugin\\GophrPlugin' => $baseDir . '/src/Plugin/GophrPlugin.php',
 );

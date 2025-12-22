@@ -1,6 +1,6 @@
 <?php
 
-namespace GophrSameDay\Admin;
+namespace Gophr\Woocommerce\Admin;
 
 class SettingsPage
 {
@@ -10,139 +10,170 @@ class SettingsPage
     }
 
     /**
-     * @internal never define functions inside callbacks.
-     * these functions could be run multiple times; this would result in a fatal error.
+     * Constructor: Set up hooks.
      */
-
-    /**
-     * custom option and settings
-     */
-    public function wporg_settings_init() {
-        // Register a new setting for "gophr-same-day" page.
-        register_setting( 'gophr-same-day', 'gophr-same-day_options' );
-
-        // Register a new section in the "gophr-same-day" page.
-        add_settings_section(
-            'gophr-same-day_section_developers',
-            __( 'The Matrix has you.', 'gophr-same-day' ), 'gophr_same_day_section_developers_callback',
-            'gophr-same-day'
-        );
-
-        // Register a new field in the "gophr-same-day_section_developers" section, inside the "gophr-same-day" page.
-        add_settings_field(
-            'gophr-same-day_field_pill', // As of WP 4.6 this value is used only internally.
-            // Use $args' label_for to populate the id inside the callback.
-            __( 'Pill', 'gophr-same-day' ),
-            'gophr-same-day_field_pill_cb',
-            'gophr-same-day',
-            'gophr-same-day_section_developers',
-            array(
-                'label_for'         => 'gophr-same-day_field_pill',
-                'class'             => 'gophr-same-day_row',
-                'gophr-same-day_custom_data' => 'custom',
-            )
-        );
+    public function __construct() {
+        add_filter( 'plugin_action_links_' . plugin_basename( GOPHR_SAME_DAY_FILE ), [ $this, 'addPluginActionLinks'] );
+        add_action( 'admin_menu', [ $this, 'addAdminMenu'] );
+        add_action( 'admin_init', [ $this, 'registerSettings'] );
     }
 
     /**
-     * Custom option and settings:
-     *  - callback functions
-     */
-
-
-    /**
-     * Developers section callback function.
+     * Add the settings link to the plugin action links.
      *
-     * @param array $args  The settings array, defining title, id, callback.
+     * @param array $links Existing action links.
+     * @return array Modified action links.
      */
-    function gophr_same_day_section_developers_callback( $args ) {
-        ?>
-        <p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Follow the white rabbit.', 'gophr-same-day' ); ?></p>
-        <?php
+    public function addPluginActionLinks( array $links ): array
+    {
+        $settings_link = '<a href="' . esc_url( admin_url( 'admin.php?page=gophr-settings' ) ) . '">' . esc_html__( 'Settings', 'gophr-same-day' ) . '</a>';
+        array_unshift( $links, $settings_link );
+        return $links;
     }
 
     /**
-     * Pill field callbakc function.
-     *
-     * WordPress has magic interaction with the following keys: label_for, class.
-     * - the "label_for" key value is used for the "for" attribute of the <label>.
-     * - the "class" key value is used for the "class" attribute of the <tr> containing the field.
-     * Note: you can add custom key value pairs to be used inside your callbacks.
-     *
-     * @param array $args
+     * Add the admin menu page for settings.
      */
-    function gophr_same_day_field_pill_cb( $args ) {
-        // Get the value of the setting we've registered with register_setting()
-        $options = get_option( 'gophr-same-day_options' );
-        ?>
-        <select
-            id="<?php echo esc_attr( $args['label_for'] ); ?>"
-            data-custom="<?php echo esc_attr( $args['gophr-same-day_custom_data'] ); ?>"
-            name="gophr-same-day_options[<?php echo esc_attr( $args['label_for'] ); ?>]">
-            <option value="red" <?php echo isset( $options[ $args['label_for'] ] ) ? ( selected( $options[ $args['label_for'] ], 'red', false ) ) : ( '' ); ?>>
-                <?php esc_html_e( 'red pill', 'gophr-same-day' ); ?>
-            </option>
-            <option value="blue" <?php echo isset( $options[ $args['label_for'] ] ) ? ( selected( $options[ $args['label_for'] ], 'blue', false ) ) : ( '' ); ?>>
-                <?php esc_html_e( 'blue pill', 'gophr-same-day' ); ?>
-            </option>
-        </select>
-        <p class="description">
-            <?php esc_html_e( 'You take the blue pill and the story ends. You wake in your bed and you believe whatever you want to believe.', 'gophr-same-day' ); ?>
-        </p>
-        <p class="description">
-            <?php esc_html_e( 'You take the red pill and you stay in Wonderland and I show you how deep the rabbit-hole goes.', 'gophr-same-day' ); ?>
-        </p>
-        <?php
-    }
-
-    /**
-     * Add the top level menu page.
-     */
-    function gophr_same_day_options_page() {
+    public function addAdminMenu() {
         add_menu_page(
-            'Gophr Same Day',
-            'Gophr Same Day Options',
-            'manage_options',
-            'gophr-same-day',
-            'gophr-same-day_options_page_html'
+            esc_html__( 'Gophr Settings', 'gophr-same-day' ),  // Page title.
+            esc_html__( 'Gophr', 'gophr-same-day' ),          // Menu title.
+            'manage_options',                                 // Capability (admin access).
+            'gophr-settings',                                 // Menu slug.
+            [ $this, 'settingsPageCallback'],              // Callback function to render the page.
+            'dashicons-cart',                                 // Icon (optional, use a dashicon or URL).
+            58                                                // Position (after WooCommerce, which is 55).
         );
     }
 
     /**
-     * Top level menu callback function
+     * Callback function to render the settings page.
      */
-    function wporg_options_page_html() {
-        // check user capabilities
-        if ( ! current_user_can( 'manage_options' ) ) {
-            return;
-        }
-
-        // add error/update messages
-
-        // check if the user have submitted the settings
-        // WordPress will add the "settings-updated" $_GET parameter to the url
-        if ( isset( $_GET['settings-updated'] ) ) {
-            // add settings saved message with the class of "updated"
-            add_settings_error( 'gophr-same-day_messages', 'gophr-same-day_message', __( 'Settings Saved', 'gophr-same-day' ), 'updated' );
-        }
-
-        // show error/update messages
-        settings_errors( 'gophr-same-day_messages' );
+    public function settingsPageCallback(): void
+    {
         ?>
         <div class="wrap">
-            <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-            <form action="options.php" method="post">
+            <h1><?php esc_html_e( 'Gophr Same-Day Delivery Settings', 'gophr-same-day' ); ?></h1>
+            <form method="post" action="options.php">
                 <?php
-                // output security fields for the registered setting "gophr-same-day"
-                settings_fields( 'gophr-same-day' );
-                // output setting sections and their fields
-                // (sections are registered for "gophr-same-day", each field is registered to a specific section)
-                do_settings_sections( 'gophr-same-day' );
-                // output save settings button
-                submit_button( 'Save Settings' );
+                settings_fields( 'gophr_settings_group' );
+                do_settings_sections( 'gophr-settings' );
+                submit_button();
                 ?>
             </form>
         </div>
         <?php
+    }
+
+    /**
+     * Register settings, sections, and fields based on the $fields array.
+     */
+    public function registerSettings(): void
+    {
+        $current_section = 'default';
+
+        foreach ( FormFields::getFields() as $key => $field ) {
+            if ( $field['type'] === 'title' ) {
+                $callback = null;
+                if ( ! empty( $field['description'] ) ) {
+                    $callback = function() use ( $field ) {
+                        echo wp_kses_post( $field['description'] );
+                    };
+                }
+
+                add_settings_section( $key, $field['title'], $callback, 'gophr-settings' );
+                $current_section = $key;
+            } else {
+                register_setting( 'gophr_settings_group', $key );
+                add_settings_field(
+                    $key,
+                    $field['title'] ?? '',
+                    [ $this, 'fieldCallback'],
+                    'gophr-settings',
+                    $current_section,
+                    $field + [ 'key' => $key ]
+                );
+            }
+        }
+    }
+
+    /**
+     * Generic callback to render fields using WooCommerce form fields where possible, or custom HTML for special types.
+     *
+     * @param array $args Field arguments.
+     */
+    public function fieldCallback(array $args): void
+    {
+        $key = $args['key'];
+        $default = $args['default'] ?? '';
+        $value = get_option( $key, $default );
+        $type = $args['type'];
+
+        if ( $type === 'single_select_country' ) {
+            $type = 'country';
+        }
+
+        if ( in_array( $type, [ 'text', 'checkbox', 'select', 'country' ] ) ) {
+            $wc_args = [
+                'type' => $type,
+                'label' => $args['label'] ?? '',
+                'description' => $args['description'] ?? '',
+                'options' => $args['options'] ?? [],
+                'custom_attributes' => isset( $args['css'] ) ? [ 'style' => $args['css'] ] : [],
+            ];
+            woocommerce_form_field( $key, $wc_args, $value );
+        } elseif ( $type === 'working_hours' ) {
+            // Custom rendering for working hours: table with days and time inputs.
+            $days = [
+                'monday' => __( 'Monday', 'gophr-same-day' ),
+                'tuesday' => __( 'Tuesday', 'gophr-same-day' ),
+                'wednesday' => __( 'Wednesday', 'gophr-same-day' ),
+                'thursday' => __( 'Thursday', 'gophr-same-day' ),
+                'friday' => __( 'Friday', 'gophr-same-day' ),
+                'saturday' => __( 'Saturday', 'gophr-same-day' ),
+                'sunday' => __( 'Sunday', 'gophr-same-day' ),
+            ];
+
+            $value = is_array( $value ) ? $value : [];
+            echo '<table class="form-table">';
+
+            foreach ( $days as $d_key => $d_label ) {
+                $from = $value[$d_key]['from'] ?? '';
+                $to = $value[$d_key]['to'] ?? '';
+                echo '<tr><th>' . esc_html( $d_label ) . '</th><td>';
+                echo '<input type="time" name="' . esc_attr( $key ) . '[' . esc_attr( $d_key ) . '][from]" value="' . esc_attr( $from ) . '" /> to ';
+                echo '<input type="time" name="' . esc_attr( $key ) . '[' . esc_attr( $d_key ) . '][to]" value="' . esc_attr( $to ) . '" />';
+                echo '</td></tr>';
+            }
+
+            echo '</table>';
+
+            if ( isset( $args['description'] ) ) {
+                echo '<p class="description">' . esc_html( $args['description'] ) . '</p>';
+            }
+        } elseif ( $type === 'services' ) {
+            // Custom rendering for services: checkboxes for different services (assumed based on typical setup).
+            $services = [
+                '0' => __( 'Standard Delivery', 'gophr-same-day' ),
+                'high_priority' => __( 'High Priority Delivery', 'gophr-same-day' ),
+                'rush' => __( 'Rush Delivery', 'gophr-same-day' ),
+                // Add more services if known from API/docs.
+            ];
+
+            $value = is_array( $value ) ? $value : [];
+            echo '<fieldset>';
+
+            foreach ( $services as $s_key => $s_label ) {
+                $checked = isset( $value[ $s_key ] ) && $value[ $s_key ] === 'yes' ? 'checked="checked"' : '';
+                echo '<label><input type="checkbox" name="' . esc_attr( $key ) . '[' . esc_attr( $s_key ) . ']" value="yes" ' . $checked . ' /> ' . esc_html( $s_label ) . '</label><br />';
+            }
+
+            echo '</fieldset>';
+            if ( isset( $args['description'] ) ) {
+                echo '<p class="description">' . esc_html( $args['description'] ) . '</p>';
+            }
+        } else {
+            echo '<p>' . esc_html__( 'Unsupported field type: ', 'gophr-same-day' ) . esc_html( $type ) . '</p>';
+        }
     }
 }

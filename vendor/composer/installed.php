@@ -1,19 +1,19 @@
 <?php return array(
     'root' => array(
-        'name' => 'shimango/gophr-same-day',
-        'pretty_version' => 'dev-master',
-        'version' => 'dev-master',
-        'reference' => '5fb54d91635d48f038210cd3582f6d9f17197482',
+        'name' => 'shimango/gophr-woocommerce',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '99eaf34a84e5a93ab2da9e386a04aaa90190a863',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
         'dev' => true,
     ),
     'versions' => array(
-        'shimango/gophr-same-day' => array(
-            'pretty_version' => 'dev-master',
-            'version' => 'dev-master',
-            'reference' => '5fb54d91635d48f038210cd3582f6d9f17197482',
+        'shimango/gophr-woocommerce' => array(
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '99eaf34a84e5a93ab2da9e386a04aaa90190a863',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

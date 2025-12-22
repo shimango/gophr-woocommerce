@@ -1,8 +1,9 @@
 <?php
+
 /**
- * Plugin Name: Gophr
+ * Plugin Name: Gophr Same-Day Delivery
  * Plugin URI: https://app.gophr.com/login
- * Description: Provides Gophr as a carrier
+ * Description: Gophr Same-Day Delivery for WooCommerce
  * Version:           1.0.0
  * Author:            Jairo Kasmierchcki
  * Author URI:        https://github.com/shimango
@@ -18,7 +19,10 @@
 defined('ABSPATH') || exit;
 
 // Define plugin constants
+
+// Define plugin constants for easier reference.
 define('GOPHR_SAME_DAY_VERSION', '1.0.0');
+define( 'GOPHR_SAME_DAY_FILE', __FILE__ );
 define('GOPHR_SAME_DAY_PATH', plugin_dir_path(__FILE__));
 define('GOPHR_SAME_DAY_URL', plugin_dir_url(__FILE__));
 define('GOPHR_SAME_DAY_BASENAME', plugin_basename(__FILE__));
@@ -30,10 +34,7 @@ if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get
 /**
  * Autoload Composer dependencies
  */
-if (file_exists(GOPHR_SAME_DAY_PATH . 'vendor/autoload.php')) {
-    require_once GOPHR_SAME_DAY_PATH . 'vendor/autoload.php';
-}
-
+require_once GOPHR_SAME_DAY_PATH . 'vendor/autoload.php';
 
 // Initialize the plugin
-\GophrSameDay\Plugin\GophrSameDayPlugin::getInstance();
+Gophr\Woocommerce\Plugin\GophrPlugin::getInstance();

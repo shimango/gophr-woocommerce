@@ -6,6 +6,6 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'GophrSameDay\\Tests\\' => array($baseDir . '/tests'),
-    'GophrSameDay\\' => array($baseDir . '/src'),
+    'Gophr\\Woocommerce\\Tests\\' => array($baseDir . '/tests'),
+    'Gophr\\Woocommerce\\' => array($baseDir . '/src'),
 );

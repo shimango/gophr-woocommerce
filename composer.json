@@ -1,5 +1,5 @@
 {
-  "name": "shimango/gophr-same-day",
+  "name": "shimango/gophr-woocommerce",
   "description": "Gophr plugin for Woocommerce",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",
@@ -8,12 +8,12 @@
   },
   "autoload": {
     "psr-4": {
-      "GophrSameDay\\": "src/"
+      "Gophr\\Woocommerce\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "GophrSameDay\\Tests\\": "tests/"
+      "Gophr\\Woocommerce\\Tests\\": "tests/"
     }
   },
   "config": {

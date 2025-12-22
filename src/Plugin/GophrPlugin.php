@@ -1,21 +1,20 @@
 <?php
 
-namespace GophrSameDay\Plugin;
+namespace Gophr\Woocommerce\Plugin;
 
-use GophrSameDay\Admin\MenuPage;
-use GophrSameDay\Admin\SettingsPage;
-use GophrSameDay\Integration\GophrShippingMethod;
+use Gophr\Woocommerce\Admin\MenuPage;
+use Gophr\Woocommerce\Admin\SettingsPage;
+use Gophr\Woocommerce\Integration\GophrShippingMethod;
 
-class GophrSameDayPlugin
+class GophrPlugin
 {
     /**
      * Plugin instance.
      *
-     * @var GophrSameDayPlugin|null
+     * @var GophrPlugin|null
      */
-    private static ?GophrSameDayPlugin $instance = null;
+    private static ?GophrPlugin $instance = null;
 
-    private MenuPage $menuPage;
 
     /**
      * Get the singleton instance.
@@ -25,6 +24,7 @@ class GophrSameDayPlugin
         if (self::$instance === null) {
             self::$instance = new self();
         }
+
         return self::$instance;
     }
 
@@ -33,7 +33,6 @@ class GophrSameDayPlugin
      */
     private function __construct()
     {
-        $this->menuPage = MenuPage::getInstance();
         $this->setupHooks();
     }
 
@@ -54,28 +53,16 @@ class GophrSameDayPlugin
         add_action('admin_enqueue_scripts', [$this, 'enqueueAdminAssets']);
 
         // In setupHooks() method:
-        add_action('admin_menu', [$this->menuPage, 'addMenuPage']);
+        add_action('admin_menu', [MenuPage::getInstance(), 'addMenuPage']);
 
         // WooCommerce
         add_action('woocommerce_shipping_init', [$this, 'gophrShippingInit']);
         add_filter('woocommerce_shipping_methods', [$this, 'addGophrShippingMethod']);
 
-        // Register our gophrSettingsInit to the admin_init action hook.
-//        add_action( 'admin_init', [$this, 'gophrSettingsInit']);
-
-        // Register our gophrOptionsPage to the admin_menu action hook.
-//        add_action( 'admin_menu', [$this, 'gophrOptionsPage']);
-    }
-
-
-    public function gophrOptionsPage(): void
-    {
-        SettingsPage::getInstance()->gophr_same_day_options_page();
-    }
-
-    public function gophrSettingsInit(): void
-    {
-        SettingsPage::getInstance()->wporg_settings_init();
+        // Initialize the settings page class.
+        if ( class_exists(SettingsPage::class)) {
+            SettingsPage::getInstance();
+        }
     }
 
     /**

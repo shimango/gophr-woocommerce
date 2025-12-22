@@ -13,7 +13,7 @@ class SettingsPage
      * Constructor: Set up hooks.
      */
     public function __construct() {
-        add_filter( 'plugin_action_links_' . plugin_basename( GOPHR_SAME_DAY_FILE ), [ $this, 'addPluginActionLinks'] );
+        add_filter( 'plugin_action_links_' . plugin_basename( \Constants::$GOPHR_SAME_DAY_FILE ), [ $this, 'addPluginActionLinks'] );
         add_action( 'admin_menu', [ $this, 'addAdminMenu'] );
         add_action( 'admin_init', [ $this, 'registerSettings'] );
     }

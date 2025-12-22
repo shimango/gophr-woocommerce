@@ -8,81 +8,27 @@ class GophrShippingMethod extends WC_Shipping_Method
     /**
      * Constructor.
      */
-    public function __construct($instance_id = 0) {
-        $this->id = 'your_delivery';
+    public function __construct($instance_id = 0)
+    {
+        $methodTitle = get_option('shipping_title', 'Gophr Same-Day Delivery');
+        $this->id = \Constants::$GOPHR_SAME_DAY_METHOD_ID;
+
         $this->instance_id = absint($instance_id);
-        $this->method_title = __('Gophr Same-Day Delivery', 'gophr-same-day');
+        $this->method_title = __($methodTitle, 'gophr-same-day');
         $this->method_description = __('Custom shipping via Gophr API', 'gophr-same-day');
         $this->supports = ['shipping-zones', 'instance-settings'];
-        $this->init();
 
         add_action('woocommerce_order_status_processing', [$this, 'create_delivery_job'], 10, 1); // Or use 'woocommerce_checkout_order_processed' for immediate creation.
+        add_action('woocommerce_update_options_shipping_' . $this->id, [$this, 'process_admin_options']);
 
-        parent::__construct($instance_id);
+//        parent::__construct($instance_id);
+
+        $this->init_settings();
     }
 
     public static function getInstance(): GophrShippingMethod
     {
         return new self();
-    }
-
-    /**
-     * Initialize settings and form fields.
-     */
-    public function init() {
-        $this->init_form_fields();
-        $this->init_settings();
-
-        // Define settings (accessible in WooCommerce > Settings > Shipping > Your Delivery).
-        $this->enabled = $this->get_option('enabled', 'yes');
-        $this->title = $this->get_option('title', __('Gophr Same-Day Delivery', 'gophr-same-day'));
-        $this->api_endpoint_quote = $this->get_option('api_endpoint_quote', 'https://yourapi.com/quote'); // Your quote endpoint.
-        $this->api_endpoint_create = $this->get_option('api_endpoint_create', 'https://yourapi.com/create-job'); // Your create job endpoint.
-        $this->api_key = $this->get_option('api_key', ''); // API key for authentication.
-
-        add_action('woocommerce_update_options_shipping_' . $this->id, [$this, 'process_admin_options']);
-    }
-
-    /**
-     * Admin settings fields.
-     */
-    public function init_form_fields() {
-        $this->form_fields = [
-            'enabled' => [
-                'title' => __('Enable/Disable', 'gophr-same-day'),
-                'type' => 'checkbox',
-                'label' => __('Enable Gophr Same-Day Delivery', 'gopphr-same-day'),
-                'default' => 'yes',
-            ],
-            'title' => [
-                'title' => __('Method Title', 'gophr-same-day'),
-                'type' => 'text',
-                'description' => __('Title shown in checkout', 'gopphr-same-day'),
-                'default' => __('Gophr Same-Day Delivery', 'gopphr-same-day'),
-                'desc_tip' => true,
-            ],
-            'api_endpoint_quote' => [
-                'title' => __('Quote API Endpoint', 'gopphr-same-day'),
-                'type' => 'text',
-                'description' => __('URL for getting delivery quotes', 'gopphr-same-day'),
-                'default' => 'https://yourapi.com/quote',
-                'desc_tip' => true,
-            ],
-            'api_endpoint_create' => [
-                'title' => __('Create Job API Endpoint', 'gopphr-same-day'),
-                'type' => 'text',
-                'description' => __('URL for creating delivery jobs', 'gopphr-same-day'),
-                'default' => 'https://yourapi.com/create-job',
-                'desc_tip' => true,
-            ],
-            'api_key' => [
-                'title' => __('API Key', 'gopphr-same-day'),
-                'type' => 'password',
-                'description' => __('Your API key for authentication', 'gopphr-same-day'),
-                'default' => '',
-                'desc_tip' => true,
-            ],
-        ];
     }
 
     /**
@@ -106,8 +52,8 @@ class GophrShippingMethod extends WC_Shipping_Method
 //         }
 
          // Calculate distance (you may need a separate API or library like Google Maps for accuracy; for now, assume postcode-based).
-         $shop_address = get_option('woocommerce_store_address'); // Customize as needed.
-         $distance = $this->calculate_distance($shop_address, $destination); // Implement this function if needed.
+//         $shop_address = get_option('woocommerce_store_address'); // Customize as needed.
+//         $distance = $this->calculate_distance($shop_address, $destination); // Implement this function if needed.
 
         $address  = get_option( 'woocommerce_store_address' );
         $address2 = get_option( 'woocommerce_store_address_2' );
@@ -146,15 +92,9 @@ class GophrShippingMethod extends WC_Shipping_Method
         $this->add_rate([
             'id' => $this->id . '_' . $this->instance_id,
             'label' => $this->title,
-            'cost' => 50.15, //$cost,
+            'cost' => 50.16, //$cost,
             'package' => $package,
         ]);
-    }
-
-    // Optional: Implement distance calculation (e.g., using a geolocation API).
-    private function calculate_distance($from, $to) {
-        // Use external API or library here (e.g., Google Distance Matrix API).
-        return 0; // Placeholder.
     }
 
     /**

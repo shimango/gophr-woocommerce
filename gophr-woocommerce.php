@@ -18,14 +18,27 @@
 // If this file is called directly, abort.
 defined('ABSPATH') || exit;
 
-// Define plugin constants
+//// Define plugin constants
+class Constants
+{
+    public static string $GOPHR_SAME_DAY_VERSION = '1.0.0';
+    public static string $GOPHR_SAME_DAY_METHOD_ID = 'gophr_shipping_method';
+    public static string $GOPHR_SAME_DAY_FILE;
+    public static string $GOPHR_SAME_DAY_PATH;
+    public static string $GOPHR_SAME_DAY_URL;
+    public static string $GOPHR_SAME_DAY_BASENAME;
 
-// Define plugin constants for easier reference.
-define('GOPHR_SAME_DAY_VERSION', '1.0.0');
-define( 'GOPHR_SAME_DAY_FILE', __FILE__ );
-define('GOPHR_SAME_DAY_PATH', plugin_dir_path(__FILE__));
-define('GOPHR_SAME_DAY_URL', plugin_dir_url(__FILE__));
-define('GOPHR_SAME_DAY_BASENAME', plugin_basename(__FILE__));
+    // Initialize static properties
+    public static function init(): void
+    {
+        self::$GOPHR_SAME_DAY_FILE = __FILE__;
+        self::$GOPHR_SAME_DAY_PATH = plugin_dir_path(__FILE__);
+        self::$GOPHR_SAME_DAY_URL = plugin_dir_url(__FILE__);
+        self::$GOPHR_SAME_DAY_BASENAME = plugin_basename(__FILE__);
+    }
+}
+
+Constants::init();;
 
 if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
     return; // Exit if WooCommerce isn't active.
@@ -34,7 +47,7 @@ if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get
 /**
  * Autoload Composer dependencies
  */
-require_once GOPHR_SAME_DAY_PATH . 'vendor/autoload.php';
+require_once Constants::$GOPHR_SAME_DAY_PATH . 'vendor/autoload.php';
 
 // Initialize the plugin
 Gophr\Woocommerce\Plugin\GophrPlugin::getInstance();

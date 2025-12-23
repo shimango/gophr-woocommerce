@@ -2,7 +2,6 @@
 
 namespace Gophr\Woocommerce\Plugin;
 
-use Gophr\Woocommerce\Admin\MenuPage;
 use Gophr\Woocommerce\Admin\SettingsPage;
 use Gophr\Woocommerce\Integration\GophrShippingMethod;
 
@@ -42,8 +41,8 @@ class GophrPlugin
     private function setupHooks(): void
     {
         // Activation / deactivation hooks
-        register_activation_hook(\Constants::$GOPHR_SAME_DAY_BASENAME, [self::class, 'activate']);
-        register_deactivation_hook(\Constants::$GOPHR_SAME_DAY_BASENAME, [self::class, 'deactivate']);
+        register_activation_hook(\Constants::$GOPHR_SAME_DAY_BASENAME, [$this, 'activate']);
+        register_deactivation_hook(\Constants::$GOPHR_SAME_DAY_BASENAME, [$this, 'deactivate']);
 
         // Load text domain
         add_action('init', [$this, 'loadTextDomain']);
@@ -60,7 +59,7 @@ class GophrPlugin
         add_filter('woocommerce_shipping_methods', [$this, 'addGophrShippingMethod']);
 
         // Initialize the settings page class.
-        if ( class_exists(SettingsPage::class)) {
+        if (class_exists(SettingsPage::class)) {
             SettingsPage::getInstance();
         }
     }

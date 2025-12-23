@@ -7,33 +7,33 @@ class FormFields
     public  static function getFields(): array
     {
         return [
-            'carrier_service_settings' => [
+            'gophr_carrier_service_settings' => [
                 'title' => __('Carrier service', 'gophr-woocommerce'),
                 'type' => 'title',
             ],
-            'enable' => [
+            'gophr_enable' => [
                 'title' => __('Enable/Disable', 'gophr-woocommerce'),
                 'type' => 'checkbox',
                 'label' => __('Enable this shipping method', 'gophr-woocommerce'),
-                'default' => 'no'
+                'default' => 'yes'
             ],
-            'shipping_title' => [
+            'gophr_shipping_title' => [
                 'carrier_title' => __('Shipping Title', 'gophr-woocommerce'),
                 'type' => 'text',
                 'description' => __('This controls the title which the user sees during checkout.', 'gophr-woocommerce'),
-                'default' => __('Gophr', 'gophr-woocommerce')
+                'default' => __('Gophr Same-Day', 'gophr-woocommerce')
             ],
-            'api_settings' => [
+            'gophr_api_settings' => [
                 'title' => __('API Settings', 'gophr-woocommerce'),
                 'type' => 'title',
             ],
-            'api_key' => [
+            'gophr_api_key' => [
                 'title' => __('Gophr API Key', 'gophr-woocommerce'),
                 'type' => 'text',
                 'description' => __('Create account at book.gophr.com and request API key though live chat or email help@gophr.com.', 'gophr-woocommerce'),
                 'default' => '',
             ],
-            'api_environment' => [
+            'gophr_environment' => [
                 'title' => __('API Key Mode', 'gophr-woocommerce'),
                 'type' => 'select',
                 'default' => 'yes',
@@ -44,21 +44,21 @@ class FormFields
                 'description' => __('Set as Test to switch to Gophr api test servers. Transaction will be treated as sample transactions by Gophr.', 'gophr-woocommerce')
             ],
             'gophr_availability' => [
-                'title' => __('Gophr Availability', 'gophr-woocommerce'),
+                'title' => __('Availability', 'gophr-woocommerce'),
                 'type' => 'title',
                 'description' => '',
             ],
             'gophr_working_hours' => [
                 'type' => 'working_hours',
             ],
-            'order_preparation_time' => [
+            'gophr_preparation_time' => [
                 'title' => __('Order preparation time', 'gophr-woocommerce'),
                 'type' => 'text',
                 'css' => "width:2em",
                 'description' => __('Order preparation and packaging time in hours.', 'gophr-woocommerce'),
                 'default' => '1',
             ],
-            'origin_info' => [
+            'gophr_origin_info' => [
                 'title' => __('Origin Information', 'gophr-woocommerce'),
                 'type' => 'title',
             ],
@@ -68,54 +68,60 @@ class FormFields
                 'description' => __('Enter your name', 'gophr-woocommerce'),
                 'default' => '',
             ],
-            'origin_company_name' => [
+            'gophr_origin_company_name' => [
                 'title' => __('Company Name', 'gophr-woocommerce'),
                 'type' => 'text',
                 'description' => __('Your business/attention name.', 'gophr-woocommerce'),
                 'default' => '',
             ],
-            'origin_addressline' => [
+            'gophr_origin_address1' => [
                 'title' => __('Origin Address', 'gophr-woocommerce'),
                 'type' => 'text',
                 'description' => __('Address for the <strong>sender</strong>.', 'gophr-woocommerce'),
                 'default' => '',
             ],
-            'origin_city' => [
+            'gophr_origin_address2' => [
+                'title' => __('Origin Address', 'gophr-woocommerce'),
+                'type' => 'text',
+                'description' => __('Address for the <strong>sender</strong>.', 'gophr-woocommerce'),
+                'default' => '',
+            ],
+            'gophr_origin_city' => [
                 'title' => __('Origin City', 'gophr-woocommerce'),
                 'type' => 'text',
                 'description' => __('City for the <strong>sender</strong>.', 'gophr-woocommerce'),
                 'default' => '',
             ],
-            'origin_country_state' => [
+            'gophr_origin_country' => [
                 'type' => 'single_select_country',
             ],
-            'origin_postcode' => [
+            'gophr_origin_postcode' => [
                 'title' => __('Origin Postcode', 'gophr-woocommerce'),
                 'type' => 'text',
                 'description' => __('Zip/postcode for the <strong>sender</strong>.', 'gophr-woocommerce'),
                 'default' => '',
             ],
-            'phone_number' => [
+            'gophr_phone_number' => [
                 'title' => __('Your Phone Number', 'gophr-woocommerce'),
                 'type' => 'text',
                 'description' => __('Your contact phone number.', 'gophr-woocommerce'),
                 'default' => '',
             ],
-            'email_address' => [
+            'gophr_email_address' => [
                 'title' => __('Your Email Address', 'gophr-woocommerce'),
                 'type' => 'text',
                 'description' => __('Your email address.', 'gophr-woocommerce'),
                 'default' => '',
             ],
-            'services_packaging' => [
+            'gophr_services_packaging' => [
                 'title' => __('Services', 'gophr-woocommerce'),
                 'type' => 'title',
                 'description' => '',
             ],
-            'services' => [
+            'gophr_services' => [
                 'type' => 'services'
             ],
-            'ship_from_address' => [
+            'gophr_ship_from_address' => [
                 'title' => __('Ship To Address', 'gophr-woocommerce'),
                 'type' => 'select',
                 'default' => 'shipping_address',
@@ -125,7 +131,7 @@ class FormFields
                 ],
                 'description' => __('Change the preferance of Shipping Address printed on the label.', 'gophr-woocommerce')
             ],
-            'disble_shipment_tracking' => [
+            'gophr_disable_shipment_tracking' => [
                 'title' => __('Shipment Tracking', 'gophr-woocommerce'),
                 'type' => 'select',
                 'default' => 'yes',
@@ -136,7 +142,7 @@ class FormFields
                 ],
                 'description' => __('Selecting Disable for customer will hide shipment tracking info from customer side order details page.', 'gophr-woocommerce')
             ],
-            'insurance_required' => [
+            'gophr_insurance_required' => [
                 'title' => __('Insured Value', 'gophr-woocommerce'),
                 'label' => __('Request Insurance to be included in Gophr rates', 'gophr-woocommerce'),
                 'type' => 'checkbox',

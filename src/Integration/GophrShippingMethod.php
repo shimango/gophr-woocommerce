@@ -10,18 +10,20 @@ class GophrShippingMethod extends WC_Shipping_Method
      */
     public function __construct($instance_id = 0)
     {
-        $methodTitle = get_option('shipping_title', 'Gophr Same-Day Delivery');
+        $methodTitle = get_option('gophr_shipping_title', 'Gophr Same-Day Delivery');
         $this->id = \Constants::$GOPHR_SAME_DAY_METHOD_ID;
 
         $this->instance_id = absint($instance_id);
+        $this->title = __($methodTitle, 'gophr-same-day');
         $this->method_title = __($methodTitle, 'gophr-same-day');
         $this->method_description = __('Custom shipping via Gophr API', 'gophr-same-day');
         $this->supports = ['shipping-zones', 'instance-settings'];
+        $this->enabled = get_option('gophr_enable', 'yes');
 
         add_action('woocommerce_order_status_processing', [$this, 'create_delivery_job'], 10, 1); // Or use 'woocommerce_checkout_order_processed' for immediate creation.
         add_action('woocommerce_update_options_shipping_' . $this->id, [$this, 'process_admin_options']);
 
-//        parent::__construct($instance_id);
+        parent::__construct($instance_id);
 
         $this->init_settings();
     }
@@ -92,7 +94,7 @@ class GophrShippingMethod extends WC_Shipping_Method
         $this->add_rate([
             'id' => $this->id . '_' . $this->instance_id,
             'label' => $this->title,
-            'cost' => 50.16, //$cost,
+            'cost' => 50.30, //$cost,
             'package' => $package,
         ]);
     }

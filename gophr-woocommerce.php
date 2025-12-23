@@ -22,7 +22,7 @@ defined('ABSPATH') || exit;
 class Constants
 {
     public static string $GOPHR_SAME_DAY_VERSION = '1.0.0';
-    public static string $GOPHR_SAME_DAY_METHOD_ID = 'gophr_shipping_method';
+    public static string $GOPHR_SAME_DAY_METHOD_ID = 'gophr-same-day';
     public static string $GOPHR_SAME_DAY_FILE;
     public static string $GOPHR_SAME_DAY_PATH;
     public static string $GOPHR_SAME_DAY_URL;
@@ -38,7 +38,7 @@ class Constants
     }
 }
 
-Constants::init();;
+Constants::init();
 
 if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
     return; // Exit if WooCommerce isn't active.

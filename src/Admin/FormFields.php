@@ -36,10 +36,10 @@ class FormFields
             'gophr_environment' => [
                 'title' => __('API Key Mode', 'gophr-woocommerce'),
                 'type' => 'select',
-                'default' => 'yes',
+                'default' => 'production',
                 'options' => [
-                    'Live' => __('Production', 'gophr-woocommerce'),
-                    'Test' => __('Sandbox', 'gophr-woocommerce'),
+                    'production' => __('Production', 'gophr-woocommerce'),
+                    'sandbox' => __('Sandbox', 'gophr-woocommerce'),
                 ],
                 'description' => __('Set as Test to switch to Gophr api test servers. Transaction will be treated as sample transactions by Gophr.', 'gophr-woocommerce')
             ],

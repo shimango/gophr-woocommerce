@@ -1,0 +1,33 @@
+{
+    "name": "shimango/gophr",
+    "description": "A PHP client for the Gophr Courier Service commercial API",
+    "keywords": ["shimango", "gophr", "courier", "last-mile", "delivery"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jairo Kasmierchcki"
+        }
+    ],
+    "require": {
+        "php": ">=8.0",
+        "guzzlehttp/guzzle": "^7.5",
+        "spatie/data-transfer-object": "^2.8"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9",
+        "phpunit/php-code-coverage": "^9",
+        "rector/rector": "^0.15.4",
+        "dg/bypass-finals": "^1.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Shimango\\Gophr\\": "src/",
+            "Shimango\\Gophr\\Tests\\Unit\\": "tests/unit"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+    }
+}

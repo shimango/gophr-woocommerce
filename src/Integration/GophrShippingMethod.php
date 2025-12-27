@@ -3,12 +3,14 @@ namespace Gophr\Woocommerce\Integration;
 
 use Shimango\Gophr\Client;
 use Shimango\Gophr\Common\Configuration;
+use WC_Logger_Interface;
 use WC_Product_Simple;
 use WC_Shipping_Method;
 
 class GophrShippingMethod extends WC_Shipping_Method
 {
     private Client $gophrClient;
+    private WC_Logger_Interface $logger;
 
     /**
      * Constructor.
@@ -23,6 +25,8 @@ class GophrShippingMethod extends WC_Shipping_Method
 
         $config = new Configuration($apiKey, $isSandbox);
         $this->gophrClient = new Client($config);
+
+        $this->logger = wc_get_logger();
     }
 
     public function init_settings(): void
@@ -50,90 +54,102 @@ class GophrShippingMethod extends WC_Shipping_Method
     /**
      * Calculate shipping rate via your API.
      */
-    public function calculate_shipping($package = []) {
-        $parcels = $this->getGophrParcelsPayload($package);
-        $payload = $this->getGophrRequestPayload($package, $parcels);
+    public function calculate_shipping($package = []): bool
+    {
+        $parcels = $this->getParcelsPayload($package);
+        $payload = $this->getRequestPayload($package, $parcels);
 
-        $quote = $this->gophrClient->getQuote($payload)->getContentsObject();
+        $response = $this->gophrClient->getQuote($payload);
 
-        if ($quote !== null) {
-            // Add the rate to checkout.
+        if ($response->getStatusCode() !== 200) {
+            $this->logger->log('error', 'Payload', [
+                'source' => 'gophr-same-day',
+                'data' => $response->getContentsArray()['errors'],
+            ]);
+
+            return false;
+        }
+
+        $responseObj = $response->getContentsObject();
+        $price = $responseObj?->data?->price_net?->amount ?? $response->getContentsArray()['data']['price_net']['amount'];
+
+        if ($price) {
             $this->add_rate([
                 'id' => $this->id . '_' . $this->instance_id,
                 'label' => $this->title,
-                'cost' => $quote->data->price_net->amount,
+                'cost' => $price,
                 'package' => $package,
             ]);
+
+            WC()->session->set("{$this->id}gophr_shipping_parcels", $parcels);
+        } else  {
+             $this->logger->log('error', 'Payload', [
+                'source' => 'gophr-same-day',
+                'data' => $payload,
+            ]);
+
+             return false;
         }
+
+        return true;
     }
 
     /**
      * Create delivery job via API when order is processed.
      */
-    public function create_delivery_job($order_id) {
-         $order = wc_get_order($order_id);
-         if (!$order) return;
+    public function create_delivery_job($order_id): bool
+    {
+        $order = wc_get_order($order_id);
 
-        // // Check if our shipping method was selected.
-        // $shipping_methods = $order->get_shipping_methods();
-        // $shipping_method_id = reset($shipping_methods)['method_id'];
-        // if (strpos($shipping_method_id, $this->id) === false) return;
+        if (!$order) {
+            return false;
+        }
 
-        // // Gather order details for your API.
-        // $billing = $order->get_address('billing');
-        // $shipping = $order->get_address('shipping');
-        // $items = array();
-        // foreach ($order->get_items() as $item) {
-        //     $product = $item->get_product();
-        //     $items[] = array(
-        //         'name' => $item->get_name(),
-        //         'quantity' => $item->get_quantity(),
-        //         'weight' => $product->get_weight(),
-        //         'dimensions' => array(
-        //             'length' => $product->get_length(),
-        //             'width' => $product->get_width(),
-        //             'height' => $product->get_height(),
-        //         ),
-        //     );
-        // }
+        // Check if the Gophr shipping method was selected.
+        $shipping_methods = $order->get_shipping_methods();
+        $shipping_method_id = reset($shipping_methods)['method_id'];
+        if (strpos($shipping_method_id, $this->id) === false) {
+            return false;
+        }
 
-        // // Prepare API request body (adjust to your create-job endpoint).
-        // $request_body = array(
-        //     'order_id' => $order_id,
-        //     'pickup_address' => get_option('woocommerce_store_address'), // Shop address.
-        //     'delivery_address' => $shipping,
-        //     'customer_details' => $billing,
-        //     'parcels' => $items,
-        //     // Add weight, distance, etc., as needed.
-        // );
+        $billing = array_filter($order->get_address('billing'));
+        $shipping = array_filter($order->get_address('shipping'));
 
-        // // Make API call.
-        // $response = wp_remote_post($this->api_endpoint_create, array(
-        //     'headers' => array(
-        //         'Authorization' => 'Bearer ' . $this->api_key,
-        //         'Content-Type' => 'application/json',
-        //     ),
-        //     'body' => json_encode($request_body),
-        // ));
+        $package['destination'] = array_merge($billing, $shipping);
 
-        // if (is_wp_error($response)) {
-        //     // Handle error (e.g., update order note).
-        //     $order->add_order_note('Failed to create delivery job: ' . $response->get_error_message());
-        //     return;
-        // }
+        $parcels = WC()->session->get("{$this->id}gophr_shipping_parcels");
+        $payload = $this->getRequestPayload($package, $parcels);
 
-        // $body = json_decode(wp_remote_retrieve_body($response), true);
-        // $job_id = isset($body['job_id']) ? $body['job_id'] : ''; // Store if needed.
+        $response = $this->gophrClient->createJob($payload);
 
-        // // Update order with success note and job ID.
-        // $order->update_meta_data('_your_delivery_job_id', $job_id);
-        // $order->add_order_note('Delivery job created successfully. Job ID: ' . $job_id);
-        // $order->save();
+        if ($response->getStatusCode() !== 201) {
+            $this->logger->log('error', 'Payload', [
+                'source' => 'gophr-same-day',
+                'data' => $response->getContentsArray()['errors'],
+            ]);
+
+            return false;
+        }
+
+        $responseObj = $response->getContentsObject();
+
+        $job_id = $responseObj->data->job_id;
+
+        // Update order with success note and job ID.
+        $order->update_meta_data("{$this->id}_delivery_job_id", $job_id);
+        $order->add_order_note('Delivery job created successfully. Job ID: ' . $job_id);
+        $order->save();
+
+        return true;
     }
 
-    private function getGophrRequestPayload(array $order, array $parcels): array
+    private function getRequestPayload(array $order, array $parcels): array
     {
         $origin = [
+            "pickup_company_name" => 'Test',
+            "pickup_person_name" => 'Test',
+            "pickup_mobile_number" => '07588112233',
+            "pickup_phone_number" => '01273115599',
             "pickup_address1" => get_option('woocommerce_store_address'),
             "pickup_address2" => get_option('woocommerce_store_address_2'),
             "pickup_city" => get_option('woocommerce_store_city'),
@@ -163,11 +179,11 @@ class GophrShippingMethod extends WC_Shipping_Method
             "pickup_country_code" => $origin['pickup_country_code'],
 //            "pickup_location_lat" => "51.4997819",
 //            "pickup_location_lng" => "-0.0784133",
-//            "pickup_company_name" => "Gophr Ltd",
-//            "pickup_person_name" => "John Smith",
+            "pickup_company_name" => $origin['pickup_company_name'],
+            "pickup_person_name" => $origin['pickup_person_name'],
 //            "pickup_email" => "john.smith@gophr.com",
-//            "pickup_mobile_number" => "07711111112",
-//            "pickup_phone_number" => "07722222232",
+            "pickup_mobile_number" => $origin['pickup_mobile_number'],
+            "pickup_phone_number" => $origin['pickup_phone_number'],
 //            "pickup_proof_required" => 1,
 //            "is_first_pickup" => 0,
 //            "sequence_number" => 1,
@@ -181,37 +197,34 @@ class GophrShippingMethod extends WC_Shipping_Method
     {
         $dropoff = [
 //            "min_required_age" => 0,
-//            "dropoff_company_name" => "Private Investigators",
-            "dropoff_address1" => $destination['address_1'],
-            "dropoff_address2" => $destination['address_2'],
-            "dropoff_city" => $destination['city'],
-            "dropoff_postcode" => $destination['postcode'],
+            "dropoff_company_name" => $destination['company'] ?? null,
+            "dropoff_address1" => $destination['address_1'] ?? null,
+            "dropoff_address2" => $destination['address_2'] ?? null,
+            "dropoff_city" => $destination['city'] ?? null,
+            "dropoff_postcode" => $destination['postcode'] ?? null,
             "dropoff_country_code" => $destination['country'],
 //            "dropoff_location_lat" => "51.49" . rand(100000, 999999),
 //            "dropoff_location_lng" => "-0.17" . rand(100000, 999999),
 //            "dropoff_tips_how_to_find" => "It's elementary my dear Watson",
-//            "dropoff_person_name" => "Sherlock Holmes",
+            "dropoff_person_name" => trim(sprintf('%s %s', $destination['first_name'] ?? null, $destination['last_name'] ?? null)),
 //            "dropoff_email" => "sherlok.holmer@gohr.com",
-//            "dropoff_mobile_number" => "07766663666",
-//            "dropoff_phone_number" => "07735555555",
+            "dropoff_mobile_number" => $destination['phone'] ?? null,
+            "dropoff_phone_number" => $destination['phone'] ?? null,
 //            "earliest_dropoff_time" => (new \DateTime('tomorrow noon'))->add(new \DateInterval('PT2H'))->format(DateTimeInterface::ATOM),
 //            "dropoff_deadline" => (new \DateTime('tomorrow noon'))->add(new \DateInterval('PT4H'))->format(DateTimeInterface::ATOM),
 //            "dropoff_proof_required" => 0,
 //            "cold_chain" => 0,
 //            "is_final_dropoff" => 0,
-//            "sequence_number" => 2,
-//            "leg_type" => "STANDARD",
+            "sequence_number" => 2,
+            "leg_type" => "STANDARD",
             "parcels" => $parcels,
         ];
 
         return [array_filter($dropoff)];
     }
 
-    private function getGophrParcelsPayload(array $package): array
+    private function getParcelsPayload(array $package): array
     {
-//        $total_weight = 0;
-//        $parcel = ['length' => 0, 'width' => 0, 'height' => 0, 'weight' => 0];
-
         $parcels = [];
 
         foreach ($package['contents'] as $itemId => $item) {

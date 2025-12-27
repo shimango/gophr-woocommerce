@@ -2,6 +2,7 @@
 
 namespace Gophr\Woocommerce\Plugin;
 
+use Constants;
 use Gophr\Woocommerce\Admin\SettingsPage;
 use Gophr\Woocommerce\Integration\GophrShippingMethod;
 
@@ -41,8 +42,8 @@ class GophrPlugin
     private function setupHooks(): void
     {
         // Activation / deactivation hooks
-        register_activation_hook(\Constants::$GOPHR_SAME_DAY_BASENAME, [$this, 'activate']);
-        register_deactivation_hook(\Constants::$GOPHR_SAME_DAY_BASENAME, [$this, 'deactivate']);
+        register_activation_hook(Constants::$GOPHR_SAME_DAY_BASENAME, [$this, 'activate']);
+        register_deactivation_hook(Constants::$GOPHR_SAME_DAY_BASENAME, [$this, 'deactivate']);
 
         // Load text domain
         add_action('init', [$this, 'loadTextDomain']);
@@ -51,11 +52,7 @@ class GophrPlugin
         add_action('wp_enqueue_scripts', [$this, 'enqueueFrontendAssets']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueAdminAssets']);
 
-        // In setupHooks() method:
-//        add_action('admin_menu', [MenuPage::getInstance(), 'addMenuPage']);
-
         // WooCommerce
-        add_action('woocommerce_shipping_init', [$this, 'gophrShippingInit']);
         add_filter('woocommerce_shipping_methods', [$this, 'addGophrShippingMethod']);
 
         // Initialize the settings page class.
@@ -77,7 +74,7 @@ class GophrPlugin
      */
     public function addGophrShippingMethod(array $methods): array
     {
-        $methods[\Constants::$GOPHR_SAME_DAY_METHOD_ID] = GophrShippingMethod::class;
+        $methods[Constants::$GOPHR_SAME_DAY_METHOD_ID] = GophrShippingMethod::class;
         return $methods;
     }
 
@@ -116,16 +113,16 @@ class GophrPlugin
     {
         wp_enqueue_style(
             'gophr-same-day-frontend',
-            \Constants::$GOPHR_SAME_DAY_URL . 'assets/css/frontend.css',
+            Constants::$GOPHR_SAME_DAY_URL . 'assets/css/frontend.css',
             [],
-            \Constants::$GOPHR_SAME_DAY_VERSION
+            Constants::$GOPHR_SAME_DAY_VERSION
         );
 
         wp_enqueue_script(
             'gophr-same-day-frontend',
-            \Constants::$GOPHR_SAME_DAY_URL . 'assets/js/frontend.js',
+            Constants::$GOPHR_SAME_DAY_URL . 'assets/js/frontend.js',
             ['jquery'],
-            \Constants::$GOPHR_SAME_DAY_VERSION,
+            Constants::$GOPHR_SAME_DAY_VERSION,
             true
         );
     }
@@ -139,7 +136,7 @@ class GophrPlugin
             'gophr-same-day-admin',
             \Constants::$GOPHR_SAME_DAY_URL . 'assets/css/admin.css',
             [],
-            \Constants::$GOPHR_SAME_DAY_VERSION
+            Constants::$GOPHR_SAME_DAY_VERSION
         );
     }
 }

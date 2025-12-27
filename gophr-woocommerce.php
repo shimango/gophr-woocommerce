@@ -23,6 +23,7 @@ class Constants
 {
     public static string $GOPHR_SAME_DAY_VERSION = '1.0.0';
     public static string $GOPHR_SAME_DAY_METHOD_ID = 'gophr-same-day';
+    public static string $GOPHR_SAME_DAY_PLUGIN = 'gophr-woocommerce';
     public static string $GOPHR_SAME_DAY_FILE;
     public static string $GOPHR_SAME_DAY_PATH;
     public static string $GOPHR_SAME_DAY_URL;

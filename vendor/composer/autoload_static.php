@@ -85,6 +85,7 @@ class ComposerStaticInit6f620332c7944bcbbd2172f4b4d4896f
         'Gophr\\Woocommerce\\Admin\\SettingsPage' => __DIR__ . '/../..' . '/src/Admin/SettingsPage.php',
         'Gophr\\Woocommerce\\Integration\\GophrShippingMethod' => __DIR__ . '/../..' . '/src/Integration/GophrShippingMethod.php',
         'Gophr\\Woocommerce\\Plugin\\GophrPlugin' => __DIR__ . '/../..' . '/src/Plugin/GophrPlugin.php',
+        'Gophr\\Woocommerce\\Utils\\Payload' => __DIR__ . '/../..' . '/src/Utils/Payload.php',
         'GuzzleHttp\\BodySummarizer' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/BodySummarizer.php',
         'GuzzleHttp\\BodySummarizerInterface' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/BodySummarizerInterface.php',
         'GuzzleHttp\\Client' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Client.php',

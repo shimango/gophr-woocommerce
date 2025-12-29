@@ -143,7 +143,7 @@ abstract class AbstractGophrResponse implements GophrResponseInterface
         if (!isset($this->object)) {
             try {
                 $this->object = new $className($this->getContentsArray());
-            } catch (DataTransferObjectError $error) {
+            } catch (DataTransferObjectError) {
                 $this->object = null;
             }
         }

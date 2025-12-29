@@ -47,4 +47,6 @@ final class DropoffDto extends AbstractDataTransferObject
     public ?int $cold_chain = null;
 
     public ?int $sequence_number = null;
+
+    public $parcels = [];
 }

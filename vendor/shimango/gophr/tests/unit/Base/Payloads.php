@@ -30,6 +30,7 @@ class Payloads
     public static function getCreateJobPayload(array $customValues = []): array
     {
         $defaultValues = [
+			"external_id" => bin2hex(random_bytes(4)),
             "vehicle_type" => 40,
             "is_confirmed" => 0,
             "multi_job_type" => self::MULTI_JOB_TYPE_MASTER_MULTI_DROP,

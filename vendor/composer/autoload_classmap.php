@@ -12,6 +12,7 @@ return array(
     'Gophr\\Woocommerce\\Admin\\SettingsPage' => $baseDir . '/src/Admin/SettingsPage.php',
     'Gophr\\Woocommerce\\Integration\\GophrShippingMethod' => $baseDir . '/src/Integration/GophrShippingMethod.php',
     'Gophr\\Woocommerce\\Plugin\\GophrPlugin' => $baseDir . '/src/Plugin/GophrPlugin.php',
+    'Gophr\\Woocommerce\\Utils\\Payload' => $baseDir . '/src/Utils/Payload.php',
     'GuzzleHttp\\BodySummarizer' => $vendorDir . '/guzzlehttp/guzzle/src/BodySummarizer.php',
     'GuzzleHttp\\BodySummarizerInterface' => $vendorDir . '/guzzlehttp/guzzle/src/BodySummarizerInterface.php',
     'GuzzleHttp\\Client' => $vendorDir . '/guzzlehttp/guzzle/src/Client.php',

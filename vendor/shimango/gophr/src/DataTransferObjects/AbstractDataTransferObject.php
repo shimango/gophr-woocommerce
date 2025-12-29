@@ -24,4 +24,9 @@ abstract class AbstractDataTransferObject extends DataTransferObject implements 
 
         parent::__construct($parameters);
     }
+
+    public function toArray(): array
+    {
+        return array_filter(parent::toArray());
+    }
 }

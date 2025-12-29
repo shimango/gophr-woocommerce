@@ -1,5 +1,14 @@
 # Changelog
 
+### 2.0.2
+- Added missing properties to Job Dto
+
+### 2.0.1
+- Bug fixes
+
+### 2.0.0
+- PHP upgrade
+
 ### 1.0.10
 - Added support for local development using environment variables
 

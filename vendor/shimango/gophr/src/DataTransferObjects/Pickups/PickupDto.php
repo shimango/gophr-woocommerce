@@ -43,4 +43,7 @@ final class PickupDto extends AbstractDataTransferObject
     public ?int $pickup_proof_required = null;
 
     public ?int $sequence_number = null;
+
+    /** @var \Shimango\Gophr\DataTransferObjects\Parcels\ParcelDto[] */
+    public $parcels = [];
 }

@@ -1,6 +1,7 @@
 <?php
 namespace Gophr\Woocommerce\Integration;
 
+use Constants;
 use Gophr\Woocommerce\Utils\Payload;
 use Shimango\Gophr\Client;
 use Shimango\Gophr\Common\Configuration;
@@ -54,10 +55,10 @@ class GophrShippingMethod extends WC_Shipping_Method
      */
     public function calculate_shipping($package = []): bool
     {
-        $parcels = Payload::getParcelsPayload($package);
-        $payload = Payload::getRequestPayload($package, $parcels);
+        $package['external_id'] = sprintf('quote-%s', Constants::$GOPHR_SAME_DAY_PLUGIN);
+        $payload = Payload::getRequestPayload($package);
 
-        $response = $this->gophrClient->getQuote($payload);
+        $response = $this->gophrClient->getQuote(array_filter($payload->toArray()));
 
         if ($response->getStatusCode() !== 200) {
             $this->logger->log('error', 'Payload', [
@@ -79,6 +80,7 @@ class GophrShippingMethod extends WC_Shipping_Method
                 'package' => $package,
             ]);
 
+            $parcels = $payload->pickups[0]->parcels;
             WC()->session->set("{$this->id}gophr_shipping_parcels", $parcels);
         } else  {
              $this->logger->log('error', 'Payload', [
@@ -119,7 +121,7 @@ class GophrShippingMethod extends WC_Shipping_Method
         $parcels = WC()->session->get("{$this->id}gophr_shipping_parcels");
         $payload = Payload::getRequestPayload($package, $parcels);
 
-        $response = $this->gophrClient->createJob($payload);
+        $response = $this->gophrClient->createJob($payload->toArray());
 
         if ($response->getStatusCode() !== 201) {
             $this->logger->log('error', 'Payload', [

@@ -6,6 +6,8 @@ use Shimango\Gophr\DataTransferObjects\AbstractDataTransferObject;
 
 final class CreateJobRequestDto extends AbstractDataTransferObject
 {
+    public string $external_id;
+
     public ?int $vehicle_type = null;
 
     public ?int $is_confirmed = null;

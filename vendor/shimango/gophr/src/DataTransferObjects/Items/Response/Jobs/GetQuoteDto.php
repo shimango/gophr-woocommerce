@@ -20,4 +20,6 @@ final class GetQuoteDto extends AbstractDataTransferObject
     public ?string $delivery_eta = null;
 
     public ?int $min_realistic_time = null;
+
+    public ?float $distance = null;
 }

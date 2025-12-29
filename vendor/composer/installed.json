@@ -552,17 +552,17 @@
         },
         {
             "name": "shimango/gophr",
-            "version": "2.0.1",
-            "version_normalized": "2.0.1.0",
+            "version": "2.0.2",
+            "version_normalized": "2.0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shimango/gophr.git",
-                "reference": "880e37ff632a04693e50f9f875e3175ec170f1d4"
+                "reference": "66795fe2bb1ef4ae903d45fb412e6768927979e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shimango/gophr/zipball/880e37ff632a04693e50f9f875e3175ec170f1d4",
-                "reference": "880e37ff632a04693e50f9f875e3175ec170f1d4",
+                "url": "https://api.github.com/repos/shimango/gophr/zipball/66795fe2bb1ef4ae903d45fb412e6768927979e3",
+                "reference": "66795fe2bb1ef4ae903d45fb412e6768927979e3",
                 "shasum": ""
             },
             "require": {
@@ -576,7 +576,7 @@
                 "phpunit/phpunit": "^9",
                 "rector/rector": "^0.15.4"
             },
-            "time": "2024-08-30T19:43:12+00:00",
+            "time": "2025-12-29T08:06:02+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -604,7 +604,7 @@
             ],
             "support": {
                 "issues": "https://github.com/shimango/gophr/issues",
-                "source": "https://github.com/shimango/gophr/tree/2.0.1"
+                "source": "https://github.com/shimango/gophr/tree/2.0.2"
             },
             "install-path": "../shimango/gophr"
         },

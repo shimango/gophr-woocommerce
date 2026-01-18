@@ -19,11 +19,11 @@
 defined('ABSPATH') || exit;
 
 //// Define plugin constants
-class Constants
+class Gophr_Constants
 {
-    public static string $GOPHR_SAME_DAY_VERSION = '1.0.0';
-    public static string $GOPHR_SAME_DAY_METHOD_ID = 'gophr-same-day';
-    public static string $GOPHR_SAME_DAY_PLUGIN = 'gophr-woocommerce';
+    public const GOPHR_SAME_DAY_VERSION = '1.0.0';
+    public const GOPHR_SAME_DAY_METHOD_ID = 'gophr-same-day';
+    public const GOPHR_SAME_DAY_PLUGIN = 'gophr-woocommerce';
     public static string $GOPHR_SAME_DAY_FILE;
     public static string $GOPHR_SAME_DAY_PATH;
     public static string $GOPHR_SAME_DAY_URL;
@@ -39,7 +39,7 @@ class Constants
     }
 }
 
-Constants::init();
+Gophr_Constants::init();
 
 if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
     return; // Exit if WooCommerce isn't active.
@@ -48,7 +48,7 @@ if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get
 /**
  * Autoload Composer dependencies
  */
-require_once Constants::$GOPHR_SAME_DAY_PATH . 'vendor/autoload.php';
+require_once Gophr_Constants::$GOPHR_SAME_DAY_PATH . 'vendor/autoload.php';
 
 // Initialize the plugin
 Gophr\Woocommerce\Plugin\GophrPlugin::getInstance();

@@ -9,11 +9,11 @@
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 // Mock Constants class for tests
-class Constants
+class Gophr_Constants
 {
-    public static string $GOPHR_SAME_DAY_VERSION = '1.0.0';
-    public static string $GOPHR_SAME_DAY_METHOD_ID = 'gophr-same-day';
-    public static string $GOPHR_SAME_DAY_PLUGIN = 'gophr-woocommerce';
+    public const GOPHR_SAME_DAY_VERSION = '1.0.0';
+    public const GOPHR_SAME_DAY_METHOD_ID = 'gophr-same-day';
+    public const GOPHR_SAME_DAY_PLUGIN = 'gophr-woocommerce';
     public static string $GOPHR_SAME_DAY_FILE;
     public static string $GOPHR_SAME_DAY_PATH;
     public static string $GOPHR_SAME_DAY_URL;
@@ -28,7 +28,7 @@ class Constants
     }
 }
 
-Constants::init();
+Gophr_Constants::init();
 
 // Load WordPress test framework
 $_tests_dir = getenv('WP_TESTS_DIR');
@@ -54,65 +54,3 @@ function _manually_load_plugin()
 
 tests_add_filter('muplugins_loaded', '_manually_load_plugin');
 require $_tests_dir . '/includes/bootstrap.php';
-
-/**
- * Base Test Case
- * Save as: tests/TestCase.php
- */
-
-
-
-/**
- * Test GophrShippingMethod Class
- * Save as: tests/Unit/GophrShippingMethodTest.php
- */
-
-
-
-/**
- * Test Payload Utility Class
- * Save as: tests/Unit/PayloadTest.php
- */
-
-
-
-/**
- * Test GophrPlugin Class
- * Save as: tests/Unit/GophrPluginTest.php
- */
-
-
-
-/**
- * Test FormFields Class
- * Save as: tests/Unit/FormFieldsTest.php
- */
-
-
-
-/**
- * Test SettingsPage Class
- * Save as: tests/Unit/SettingsPageTest.php
- */
-
-
-
-/**
- * Integration Test for Order Flow
- * Save as: tests/Integration/OrderFlowTest.php
- */
-
-
-
-/**
- * Integration Test for Settings
- * Save as: tests/Integration/SettingsIntegrationTest.php
- */
-
-
-
-/**
- * Mock Tests for API Calls
- * Save as: tests/Unit/ApiMockTest.php
- */
-

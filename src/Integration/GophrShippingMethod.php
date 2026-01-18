@@ -1,7 +1,7 @@
 <?php
 namespace Gophr\Woocommerce\Integration;
 
-use Constants;
+use Gophr_Constants;
 use Gophr\Woocommerce\Utils\Payload;
 use Shimango\Gophr\Client;
 use Shimango\Gophr\Common\Configuration;
@@ -12,6 +12,8 @@ class GophrShippingMethod extends WC_Shipping_Method
 {
     private Client $gophrClient;
     private WC_Logger_Interface $logger;
+    private static ?GophrShippingMethod $instance = null;
+
 
     /**
      * Constructor.
@@ -33,7 +35,7 @@ class GophrShippingMethod extends WC_Shipping_Method
     public function init_settings(): void
     {
         $methodTitle = get_option('gophr_shipping_title', 'Gophr Same-Day Delivery');
-        $this->id = \Constants::$GOPHR_SAME_DAY_METHOD_ID;
+        $this->id = \Gophr_Constants::GOPHR_SAME_DAY_METHOD_ID;
 
         $this->title = __($methodTitle, 'gophr-same-day');
         $this->method_title = __($methodTitle, 'gophr-same-day');
@@ -47,7 +49,11 @@ class GophrShippingMethod extends WC_Shipping_Method
 
     public static function getInstance(): GophrShippingMethod
     {
-        return new self();
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
     }
 
     /**
@@ -55,7 +61,7 @@ class GophrShippingMethod extends WC_Shipping_Method
      */
     public function calculate_shipping($package = []): bool
     {
-        $package['external_id'] = sprintf('quote-%s', Constants::$GOPHR_SAME_DAY_PLUGIN);
+        $package['external_id'] = sprintf('quote-%s', Gophr_Constants::GOPHR_SAME_DAY_PLUGIN);
         $payload = Payload::getRequestPayload($package);
 
         $response = $this->gophrClient->getQuote(array_filter($payload->toArray()));
@@ -81,7 +87,9 @@ class GophrShippingMethod extends WC_Shipping_Method
             ]);
 
             $parcels = $payload->pickups[0]->parcels;
-            WC()->session->set("{$this->id}gophr_shipping_parcels", $parcels);
+            if (WC()->session) {
+                WC()->session->set("{$this->id}gophr_shipping_parcels", $parcels);
+            }
         } else  {
              $this->logger->log('error', 'Payload', [
                 'source' => 'gophr-same-day',
@@ -118,7 +126,7 @@ class GophrShippingMethod extends WC_Shipping_Method
         $package['destination'] = array_merge($billing, $shipping);
         $package['external_id'] = "{$order_id}";
 
-        $parcels = WC()->session->get("{$this->id}gophr_shipping_parcels");
+        $parcels = WC()->session?->get("{$this->id}gophr_shipping_parcels");
         $payload = Payload::getRequestPayload($package, $parcels);
 
         $response = $this->gophrClient->createJob($payload->toArray());

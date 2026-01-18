@@ -55,7 +55,7 @@ class SettingsPageTest extends TestCase
 
     public function test_plugin_action_links_filter_exists()
     {
-        $plugin_file = plugin_basename(\Constants::$GOPHR_SAME_DAY_FILE);
+        $plugin_file = plugin_basename(\Gophr_Constants::$GOPHR_SAME_DAY_FILE);
         $this->assertTrue(has_filter('plugin_action_links_' . $plugin_file));
     }
 }

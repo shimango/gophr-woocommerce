@@ -13,7 +13,7 @@ class SettingsPage
      * Constructor: Set up hooks.
      */
     public function __construct() {
-        add_filter( 'plugin_action_links_' . plugin_basename( \Constants::$GOPHR_SAME_DAY_FILE ), [ $this, 'addPluginActionLinks'] );
+        add_filter( 'plugin_action_links_' . plugin_basename( \Gophr_Constants::$GOPHR_SAME_DAY_FILE ), [ $this, 'addPluginActionLinks'] );
         add_action( 'admin_menu', [ $this, 'addAdminMenu'] );
         add_action( 'admin_init', [ $this, 'registerSettings'] );
     }
@@ -51,18 +51,19 @@ class SettingsPage
      */
     public function settingsPageCallback(): void
     {
-        ?>
+        echo '
         <div class="wrap">
-            <h1><?php esc_html_e( 'Gophr Same-Day Delivery Settings', 'gophr-same-day' ); ?></h1>
+            <h1>' . esc_html__('Gophr Same-Day Delivery Settings', 'gophr-same-day') . '</h1>
             <form method="post" action="options.php">
-                <?php
-                settings_fields( 'gophr_settings_group' );
-                do_settings_sections( 'gophr-settings' );
-                submit_button();
-                ?>
+    ';
+        settings_fields('gophr_settings_group');
+        do_settings_sections('gophr-settings');
+        wp_nonce_field('gophr_save_settings', 'gophr_nonce');
+        submit_button();
+        echo '
             </form>
         </div>
-        <?php
+    ';
     }
 
     /**
@@ -106,7 +107,7 @@ class SettingsPage
     {
         $key = $args['key'];
         $default = $args['default'] ?? '';
-        $value = get_option( $key, $default );
+        $value = sanitize_text_field(get_option( $key, $default ));
         $type = $args['type'];
 
         if ( $type === 'single_select_country' ) {

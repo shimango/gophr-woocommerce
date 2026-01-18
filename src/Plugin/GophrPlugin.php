@@ -2,7 +2,6 @@
 
 namespace Gophr\Woocommerce\Plugin;
 
-use Gophr_Constants;
 use Gophr\Woocommerce\Admin\SettingsPage;
 use Gophr\Woocommerce\Integration\GophrShippingMethod;
 
@@ -42,8 +41,8 @@ class GophrPlugin
     private function setupHooks(): void
     {
         // Activation / deactivation hooks
-        register_activation_hook(Gophr_Constants::$GOPHR_SAME_DAY_BASENAME, [$this, 'activate']);
-        register_deactivation_hook(Gophr_Constants::$GOPHR_SAME_DAY_BASENAME, [$this, 'deactivate']);
+        register_activation_hook(GOPHR_BASENAME, [$this, 'activate']);
+        register_deactivation_hook(GOPHR_BASENAME, [$this, 'deactivate']);
 
         // Load text domain
         add_action('init', [$this, 'loadTextDomain']);
@@ -62,19 +61,11 @@ class GophrPlugin
     }
 
     /**
-     * Initialize the shipping method.
-     */
-    public function gophrShippingInit(): void
-    {
-        GophrShippingMethod::getInstance();
-    }
-
-    /**
      * Add the shipping method to WooCommerce.
      */
     public function addGophrShippingMethod(array $methods): array
     {
-        $methods[Gophr_Constants::GOPHR_SAME_DAY_METHOD_ID] = GophrShippingMethod::class;
+        $methods[GOPHR_METHOD_ID] = GophrShippingMethod::class;
         return $methods;
     }
 
@@ -114,16 +105,16 @@ class GophrPlugin
     {
         wp_enqueue_style(
             'gophr-same-day-frontend',
-            Gophr_Constants::$GOPHR_SAME_DAY_URL . 'assets/css/frontend.css',
+            GOPHR_URL . 'assets/css/frontend.css',
             [],
-            Gophr_Constants::GOPHR_SAME_DAY_VERSION
+            GOPHR_VERSION
         );
 
         wp_enqueue_script(
             'gophr-same-day-frontend',
-            Gophr_Constants::$GOPHR_SAME_DAY_URL . 'assets/js/frontend.js',
+            GOPHR_URL . 'assets/js/frontend.js',
             ['jquery'],
-            Gophr_Constants::GOPHR_SAME_DAY_VERSION,
+            GOPHR_VERSION,
             true
         );
     }
@@ -135,9 +126,9 @@ class GophrPlugin
     {
         wp_enqueue_style(
             'gophr-same-day-admin',
-            \Gophr_Constants::$GOPHR_SAME_DAY_URL . 'assets/css/admin.css',
+            GOPHR_URL . 'assets/css/admin.css',
             [],
-            Gophr_Constants::GOPHR_SAME_DAY_VERSION
+            GOPHR_VERSION
         );
     }
 }

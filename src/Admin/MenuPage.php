@@ -17,7 +17,7 @@ class MenuPage
             'manage_options',
             'gophr_same_day',
             [$this, 'renderPage'],
-            'data:image/svg+xml;base64,' . base64_encode( file_get_contents( \Gophr_Constants::$GOPHR_SAME_DAY_PATH . 'assets/images/gophr.svg' ) ),
+            'data:image/svg+xml;base64,' . base64_encode( file_get_contents( GOPHR_PATH . 'assets/images/gophr.svg' ) ),
         );
 
         add_submenu_page(

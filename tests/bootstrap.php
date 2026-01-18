@@ -8,28 +8,6 @@
 // Composer autoloader
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-// Mock Constants class for tests
-class Gophr_Constants
-{
-    public const GOPHR_SAME_DAY_VERSION = '1.0.0';
-    public const GOPHR_SAME_DAY_METHOD_ID = 'gophr-same-day';
-    public const GOPHR_SAME_DAY_PLUGIN = 'gophr-woocommerce';
-    public static string $GOPHR_SAME_DAY_FILE;
-    public static string $GOPHR_SAME_DAY_PATH;
-    public static string $GOPHR_SAME_DAY_URL;
-    public static string $GOPHR_SAME_DAY_BASENAME;
-
-    public static function init(): void
-    {
-        self::$GOPHR_SAME_DAY_FILE = dirname(__DIR__) . '/gophr-woocommerce.php';
-        self::$GOPHR_SAME_DAY_PATH = dirname(__DIR__) . '/';
-        self::$GOPHR_SAME_DAY_URL = 'http://localhost/wp-content/plugins/gophr-woocommerce/';
-        self::$GOPHR_SAME_DAY_BASENAME = 'gophr-woocommerce/gophr-woocommerce.php';
-    }
-}
-
-Gophr_Constants::init();
-
 // Load WordPress test framework
 $_tests_dir = getenv('WP_TESTS_DIR');
 if (!$_tests_dir) {

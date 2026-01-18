@@ -2,7 +2,6 @@
 
 namespace Gophr\Woocommerce\Utils;
 
-use Gophr_Constants;
 use Shimango\Gophr\DataTransferObjects\Dropoffs\DropoffDto;
 use Shimango\Gophr\DataTransferObjects\Parcels\ParcelDto;
 use Shimango\Gophr\DataTransferObjects\Pickups\PickupDto;
@@ -87,7 +86,7 @@ class Payload
             "is_confirmed" => 1,
             "pickups" => [$pickups],
             "dropoffs" => [$dropoffs],
-            "meta_data" => [["booking_method" => Gophr_Constants::GOPHR_SAME_DAY_PLUGIN]],
+            "meta_data" => [["booking_method" => GOPHR_PLUGIN_NAME]],
         ]);
     }
 

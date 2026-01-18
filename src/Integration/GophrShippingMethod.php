@@ -1,154 +1,271 @@
 <?php
+
 namespace Gophr\Woocommerce\Integration;
 
-use Gophr_Constants;
 use Gophr\Woocommerce\Utils\Payload;
 use Shimango\Gophr\Client;
 use Shimango\Gophr\Common\Configuration;
 use WC_Logger_Interface;
 use WC_Shipping_Method;
 
-class GophrShippingMethod extends WC_Shipping_Method
-{
+class GophrShippingMethod extends WC_Shipping_Method {
+
     private Client $gophrClient;
     private WC_Logger_Interface $logger;
-    private static ?GophrShippingMethod $instance = null;
 
-
-    /**
-     * Constructor.
-     */
-    public function __construct($instance_id = 0)
-    {
+    public function __construct($instance_id = 0) {
         parent::__construct($instance_id);
+
+        $this->id = GOPHR_METHOD_ID;
         $this->init_settings();
+        $this->init_gophr_client();
 
-        $apiKey = get_option('gophr_api_key');
-        $isSandbox = get_option('gophr_environment', false) === 'sandbox';
-
-        $config = new Configuration($apiKey, $isSandbox);
-        $this->gophrClient = new Client($config);
+        // Register hooks in constructor, not init_settings
+        add_action('woocommerce_order_status_processing', [$this, 'create_delivery_job'], 10, 1);
 
         $this->logger = wc_get_logger();
     }
 
-    public function init_settings(): void
-    {
-        $methodTitle = get_option('gophr_shipping_title', 'Gophr Same-Day Delivery');
-        $this->id = \Gophr_Constants::GOPHR_SAME_DAY_METHOD_ID;
+    private function init_gophr_client(): void {
+        $apiKey = sanitize_text_field(get_option('gophr_api_key', ''));
+        $isSandbox = get_option('gophr_environment', 'production') === 'sandbox';
+
+        if (empty($apiKey)) {
+            $this->logger->warning('Gophr API key not configured', [
+                'source' => 'gophr-same-day',
+            ]);
+            return;
+        }
+
+        try {
+            $config = new Configuration($apiKey, $isSandbox);
+            $this->gophrClient = new Client($config);
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to initialize Gophr client: ' . $e->getMessage(), [
+                'source' => 'gophr-same-day',
+            ]);
+        }
+    }
+
+    public function init_settings(): void {
+        $methodTitle = sanitize_text_field(
+            get_option('gophr_shipping_title', 'Gophr Same-Day Delivery')
+        );
 
         $this->title = __($methodTitle, 'gophr-same-day');
         $this->method_title = __($methodTitle, 'gophr-same-day');
-        $this->method_description = __('Custom shipping via Gophr API', 'gophr-same-day');
+        $this->method_description = __('Same-day delivery powered by Gophr', 'gophr-same-day');
         $this->supports = ['shipping-zones', 'instance-settings'];
         $this->enabled = get_option('gophr_enable', 'yes');
 
-        add_action('woocommerce_order_status_processing', [$this, 'create_delivery_job'], 10, 1);
         parent::init_settings();
     }
 
-    public static function getInstance(): GophrShippingMethod
-    {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-
-        return self::$instance;
-    }
-
     /**
-     * Calculate shipping rate via your API.
+     * Calculate shipping rate via Gophr API.
+     *
+     * @param array $package Shipping package data.
+     * @return bool Success status.
      */
-    public function calculate_shipping($package = []): bool
-    {
-        $package['external_id'] = sprintf('quote-%s', Gophr_Constants::GOPHR_SAME_DAY_PLUGIN);
-        $payload = Payload::getRequestPayload($package);
-
-        $response = $this->gophrClient->getQuote(array_filter($payload->toArray()));
-
-        if ($response->getStatusCode() !== 200) {
-            $this->logger->log('error', 'Payload', [
+    public function calculate_shipping($package = []): bool {
+        if (!isset($this->gophrClient)) {
+            $this->logger->error('Gophr client not initialized', [
                 'source' => 'gophr-same-day',
-                'data' => $response->getContentsArray()['errors'],
             ]);
-
             return false;
         }
 
-        $responseObj = $response->getContentsObject();
-        $price = $responseObj?->data?->price_net?->amount ?? $response->getContentsArray()['data']['price_net']['amount'];
+        // Validate package
+        if (empty($package['destination']) || empty($package['contents'])) {
+            return false;
+        }
 
-        if ($price) {
+        $package['external_id'] = sprintf('quote-%s-%s', GOPHR_PLUGIN_NAME, time());
+
+        try {
+            $payload = Payload::getRequestPayload($package);
+            $response = $this->gophrClient->getQuote(array_filter($payload->toArray()));
+
+            if ($response->getStatusCode() !== 200) {
+                $this->log_api_error('Quote failed', $response);
+                return false;
+            }
+
+            $contents = $response->getContentsArray();
+
+            // Validate response structure
+            if (!isset($contents['data']['price_net']['amount'])) {
+                $this->logger->error('Invalid API response structure', [
+                    'source' => 'gophr-same-day',
+                    'response' => $contents,
+                ]);
+                return false;
+            }
+
+            $price = floatval($contents['data']['price_net']['amount']);
+
+            if ($price <= 0) {
+                $this->logger->warning('Invalid price returned from API', [
+                    'source' => 'gophr-same-day',
+                    'price' => $price,
+                ]);
+                return false;
+            }
+
             $this->add_rate([
                 'id' => $this->id . '_' . $this->instance_id,
                 'label' => $this->title,
                 'cost' => $price,
                 'package' => $package,
+                'meta_data' => [
+                    'gophr_quote_id' => $contents['data']['quote_id'] ?? '',
+                ],
             ]);
 
+            // Store parcels - check if session is available
             $parcels = $payload->pickups[0]->parcels;
             if (WC()->session) {
-                WC()->session->set("{$this->id}gophr_shipping_parcels", $parcels);
+                WC()->session->set("{$this->id}_shipping_parcels", $parcels);
+            } else {
+                // Fallback to transient if session not available
+                set_transient(
+                    "gophr_parcels_temp_" . md5(serialize($package)),
+                    $parcels,
+                    HOUR_IN_SECONDS
+                );
             }
-        } else  {
-             $this->logger->log('error', 'Payload', [
+
+            return true;
+
+        } catch (\Exception $e) {
+            $this->logger->error('API Error: ' . $e->getMessage(), [
                 'source' => 'gophr-same-day',
-                'data' => $payload,
+                'trace' => $e->getTraceAsString(),
             ]);
-
-             return false;
+            return false;
         }
-
-        return true;
     }
 
     /**
-     * Create delivery job via API when order is processed.
+     * Create delivery job when order is processed.
+     *
+     * @param int $order_id Order ID.
+     * @return bool Success status.
      */
-    public function create_delivery_job($order_id): bool
-    {
+    public function create_delivery_job($order_id): bool {
+        if (!isset($this->gophrClient)) {
+            return false;
+        }
+
         $order = wc_get_order($order_id);
-
         if (!$order) {
-            return false;
-        }
-
-        // Check if the Gophr shipping method was selected.
-        $shipping_methods = $order->get_shipping_methods();
-        $shipping_method_id = reset($shipping_methods)['method_id'];
-        if (strpos($shipping_method_id, $this->id) === false) {
-            return false;
-        }
-
-        $billing = array_filter($order->get_address('billing'));
-        $shipping = array_filter($order->get_address('shipping'));
-
-        $package['destination'] = array_merge($billing, $shipping);
-        $package['external_id'] = "{$order_id}";
-
-        $parcels = WC()->session?->get("{$this->id}gophr_shipping_parcels");
-        $payload = Payload::getRequestPayload($package, $parcels);
-
-        $response = $this->gophrClient->createJob($payload->toArray());
-
-        if ($response->getStatusCode() !== 201) {
-            $this->logger->log('error', 'Payload', [
+            $this->logger->error('Order not found', [
                 'source' => 'gophr-same-day',
-                'data' => $response->getContentsArray()['errors'],
+                'order_id' => $order_id,
+            ]);
+            return false;
+        }
+
+        // Check if Gophr shipping was selected
+        $shipping_methods = $order->get_shipping_methods();
+        if (empty($shipping_methods)) {
+            return false;
+        }
+
+        $shipping_method = reset($shipping_methods);
+        if (strpos($shipping_method->get_method_id(), $this->id) === false) {
+            return false;
+        }
+
+        // Check if job already created
+        $existing_job_id = $order->get_meta("{$this->id}_delivery_job_id", true);
+        if (!empty($existing_job_id)) {
+            $this->logger->info('Delivery job already exists', [
+                'source' => 'gophr-same-day',
+                'order_id' => $order_id,
+                'job_id' => $existing_job_id,
+            ]);
+            return false;
+        }
+
+        try {
+            $billing = array_filter($order->get_address('billing'));
+            $shipping = array_filter($order->get_address('shipping'));
+
+            $package['destination'] = array_merge($billing, $shipping);
+            $package['external_id'] = (string) $order_id;
+
+            // Retrieve parcels
+            $parcels = WC()->session ?
+                WC()->session->get("{$this->id}_shipping_parcels") :
+                get_transient("gophr_parcels_temp_" . md5(serialize($package)));
+
+            $payload = Payload::getRequestPayload($package, $parcels);
+            $response = $this->gophrClient->createJob($payload->toArray());
+
+            if ($response->getStatusCode() !== 201) {
+                $this->log_api_error('Job creation failed', $response);
+                $order->add_order_note(
+                    __('Failed to create Gophr delivery job. Please check logs.', 'gophr-same-day')
+                );
+                return false;
+            }
+
+            $responseObj = $response->getContentsObject();
+            $job_id = $responseObj->data->job_id ?? null;
+
+            if (empty($job_id)) {
+                $this->logger->error('No job ID in response', [
+                    'source' => 'gophr-same-day',
+                    'response' => $response->getContentsArray(),
+                ]);
+                return false;
+            }
+
+            // Update order with job ID
+            $order->update_meta_data("{$this->id}_delivery_job_id", sanitize_text_field($job_id));
+            $order->add_order_note(
+                sprintf(
+                    __('Gophr delivery job created successfully. Job ID: %s', 'gophr-same-day'),
+                    $job_id
+                )
+            );
+            $order->save();
+
+            $this->logger->info('Delivery job created', [
+                'source' => 'gophr-same-day',
+                'order_id' => $order_id,
+                'job_id' => $job_id,
             ]);
 
+            return true;
+
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to create delivery job: ' . $e->getMessage(), [
+                'source' => 'gophr-same-day',
+                'order_id' => $order_id,
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            $order->add_order_note(
+                __('Error creating Gophr delivery job. Please contact support.', 'gophr-same-day')
+            );
+
             return false;
         }
+    }
 
-        $responseObj = $response->getContentsObject();
-
-        $job_id = $responseObj->data->job_id;
-
-        // Update order with success note and job ID.
-        $order->update_meta_data("{$this->id}_delivery_job_id", $job_id);
-        $order->add_order_note('Delivery job created successfully. Job ID: ' . $job_id);
-        $order->save();
-
-        return true;
+    /**
+     * Log API errors consistently.
+     *
+     * @param string $message Error message.
+     * @param mixed $response API response.
+     */
+    private function log_api_error(string $message, $response): void {
+        $this->logger->error($message, [
+            'source' => 'gophr-same-day',
+            'status_code' => $response->getStatusCode(),
+            'errors' => $response->getContentsArray()['errors'] ?? [],
+        ]);
     }
 }

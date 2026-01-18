@@ -1,0 +1,50 @@
+<!-- phpunit.xml -->
+<?xml version="1.0"?>
+<phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+        bootstrap="tests/bootstrap.php"
+        backupGlobals="false"
+        colors="true"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        processIsolation="false"
+        stopOnFailure="false"
+        cacheResultFile=".phpunit.cache/test-results"
+        executionOrder="depends,defects"
+        verbose="true"
+>
+    <testsuites>
+        <testsuite name="Unit">
+            <directory suffix="Test.php">./tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Integration">
+            <directory suffix="Test.php">./tests/Integration</directory>
+        </testsuite>
+    </testsuites>
+
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">./src</directory>
+        </include>
+        <exclude>
+            <directory>./vendor</directory>
+            <directory>./tests</directory>
+            <directory>./assets</directory>
+        </exclude>
+        <report>
+            <html outputDirectory="tests/coverage/html"/>
+            <text outputFile="php://stdout" showUncoveredFiles="false"/>
+            <clover outputFile="tests/coverage/clover.xml"/>
+        </report>
+    </coverage>
+
+    <php>
+        <env name="WP_TESTS_DIR" value="/tmp/wordpress-tests-lib"/>
+        <env name="WP_CORE_DIR" value="/tmp/wordpress/"/>
+        <const name="WP_DEBUG" value="true"/>
+        <const name="WP_DEBUG_LOG" value="false"/>
+        <const name="WP_DEBUG_DISPLAY" value="false"/>
+    </php>
+</phpunit>

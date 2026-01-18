@@ -1,0 +1,22 @@
+# phpstan.neon
+parameters:
+    level: 5
+    paths:
+        - src
+    excludePaths:
+        - vendor
+        - tests
+    ignoreErrors:
+        # WordPress globals
+        - '#Undefined variable: \$wpdb#'
+        - '#Undefined variable: \$wp_#'
+        # WooCommerce dynamic methods
+        - '#Call to an undefined method WC_#'
+        - '#Access to an undefined property WC_#'
+    bootstrapFiles:
+        - gophr-woocommerce.php
+    scanDirectories:
+        - vendor/woocommerce/woocommerce
+    universalObjectCratesClasses:
+        - stdClass
+    checkMissingIterableValueType: false

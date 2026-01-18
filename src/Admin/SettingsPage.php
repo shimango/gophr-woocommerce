@@ -42,29 +42,32 @@ class SettingsPage {
         );
     }
 
-    public function settingsPageCallback(): void {
+    public function settingsPageCallback(): string {
         // Check user capabilities
         if (!current_user_can('manage_options')) {
-            wp_die(
-                esc_html__('You do not have sufficient permissions to access this page.', 'gophr-same-day')
-            );
+            return esc_html__('You do not have sufficient permissions to access this page.', 'gophr-same-day');
         }
 
-        ?>
-        <div class="wrap">
-            <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
+        $html = '<div class="wrap">';
+        $html .= '<h1>' . esc_html(get_admin_page_title()) . '</h1>';
 
-            <?php settings_errors('gophr_settings_group'); ?>
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        $html .= settings_errors('gophr_settings_group');
 
-            <form method="post" action="options.php">
-                <?php
-                settings_fields('gophr_settings_group');
-                do_settings_sections('gophr-settings');
-                submit_button();
-                ?>
-            </form>
-        </div>
-        <?php
+        $html .= '<form method="post" action="options.php">';
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        $html .= settings_fields('gophr_settings_group');
+
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        $html .= do_settings_sections('gophr-settings');
+
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        $html .= submit_button();
+
+        $html .= '</form>';
+        $html .= '</div>';
+
+        return $html;
     }
 
     public function registerSettings(): void {

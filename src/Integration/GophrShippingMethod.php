@@ -72,6 +72,13 @@ class GophrShippingMethod extends WC_Shipping_Method {
             $this->logger->error('Gophr client not initialized', [
                 'source' => 'gophr-same-day',
             ]);
+
+            return false;
+        }
+
+        $enabled = (bool) get_option('gophr_enable');
+        if (!$enabled) {
+            $this->logger->info(GOPHR_PLUGIN_NAME . ' not enabled');
             return false;
         }
 

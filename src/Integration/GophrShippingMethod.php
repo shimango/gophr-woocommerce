@@ -17,13 +17,12 @@ class GophrShippingMethod extends WC_Shipping_Method {
         parent::__construct($instance_id);
 
         $this->id = GOPHR_METHOD_ID;
+        $this->logger = wc_get_logger();
         $this->init_settings();
         $this->init_gophr_client();
 
         // Register hooks in constructor, not init_settings
         add_action('woocommerce_order_status_processing', [$this, 'create_delivery_job'], 10, 1);
-
-        $this->logger = wc_get_logger();
     }
 
     private function init_gophr_client(): void {
@@ -49,11 +48,11 @@ class GophrShippingMethod extends WC_Shipping_Method {
 
     public function init_settings(): void {
         $methodTitle = sanitize_text_field(
-            get_option('gophr_shipping_title', 'Gophr Same-Day Delivery')
+            get_option('gophr_shipping_title', __('Gophr Same-Day Delivery', 'gophr-same-day'))
         );
 
-        $this->title = __($methodTitle, 'gophr-same-day');
-        $this->method_title = __($methodTitle, 'gophr-same-day');
+        $this->title = $methodTitle;
+        $this->method_title = $methodTitle;
         $this->method_description = __('Same-day delivery powered by Gophr', 'gophr-same-day');
         $this->supports = ['shipping-zones', 'instance-settings'];
         $this->enabled = get_option('gophr_enable', 'yes');

@@ -47,9 +47,9 @@ class GophrShippingMethodTest extends TestCase
         $this->assertNotEmpty($this->shipping_method->method_description);
     }
 
-    public function test_get_instance_returns_gophr_shipping_method()
+    public function test_can_instantiate_shipping_method()
     {
-        $instance = GophrShippingMethod::getInstance();
+        $instance = new GophrShippingMethod();
         $this->assertInstanceOf(GophrShippingMethod::class, $instance);
     }
 }

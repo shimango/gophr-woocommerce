@@ -152,6 +152,10 @@ class SettingsPage {
             $this->render_working_hours_field($key, $value, $args);
         } elseif ($type === 'services') {
             $this->render_services_field($key, $value, $args);
+        } elseif ($type === 'textarea') {
+            $this->render_textarea_field($key, $value, $args);
+        } elseif ($type === 'parcel_flags') {
+            $this->render_parcel_flags_field($key, $value, $args);
         }
     }
 
@@ -208,6 +212,50 @@ class SettingsPage {
                 esc_attr($key . '[' . $s_key . ']'),
                 $checked,
                 esc_html($s_label)
+            );
+        }
+        echo '</fieldset>';
+
+        if (isset($args['description'])) {
+            printf('<p class="description">%s</p>', wp_kses_post($args['description']));
+        }
+    }
+
+    private function render_textarea_field(string $key, $value, array $args): void {
+        $value = is_string($value) ? $value : '';
+        $css = isset($args['css']) ? esc_attr($args['css']) : 'width:100%;max-width:400px;';
+
+        printf(
+            '<textarea name="%s" rows="3" style="%s">%s</textarea>',
+            esc_attr($key),
+            $css,
+            esc_textarea($value)
+        );
+
+        if (isset($args['description'])) {
+            printf('<p class="description">%s</p>', wp_kses_post($args['description']));
+        }
+    }
+
+    private function render_parcel_flags_field(string $key, $value, array $args): void {
+        $flags = [
+            'is_food' => __('Food', 'gophr-same-day'),
+            'is_fragile' => __('Fragile', 'gophr-same-day'),
+            'is_liquid' => __('Liquid', 'gophr-same-day'),
+            'is_glass' => __('Glass', 'gophr-same-day'),
+        ];
+
+        $value = is_array($value) ? $value : [];
+
+        echo '<fieldset>';
+        foreach ($flags as $f_key => $f_label) {
+            $checked = isset($value[$f_key]) && $value[$f_key] === 'yes' ? 'checked="checked"' : '';
+
+            printf(
+                '<label><input type="checkbox" name="%s" value="yes" %s /> %s</label><br />',
+                esc_attr($key . '[' . $f_key . ']'),
+                $checked,
+                esc_html($f_label)
             );
         }
         echo '</fieldset>';

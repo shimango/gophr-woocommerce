@@ -41,8 +41,8 @@ class GophrPlugin
     private function setupHooks(): void
     {
         // Activation / deactivation hooks
-        register_activation_hook(GOPHR_BASENAME, [$this, 'activate']);
-        register_deactivation_hook(GOPHR_BASENAME, [$this, 'deactivate']);
+        register_activation_hook(GOPHR_FILE, [$this, 'activate']);
+        register_deactivation_hook(GOPHR_FILE, [$this, 'deactivate']);
 
         // Load text domain
         add_action('init', [$this, 'loadTextDomain']);
@@ -94,7 +94,7 @@ class GophrPlugin
         load_plugin_textdomain(
             'gophr-same-day',
             false,
-            dirname(plugin_basename(__FILE__)) . '/languages/'
+            dirname(GOPHR_BASENAME) . '/languages'
         );
     }
 

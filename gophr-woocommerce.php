@@ -28,9 +28,13 @@ define('GOPHR_PATH', plugin_dir_path(__FILE__));
 define('GOPHR_URL', plugin_dir_url(__FILE__));
 define('GOPHR_BASENAME', plugin_basename(__FILE__));
 
-// Check if WooCommerce is active
-if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
-    add_action('admin_notices', function() {
+// Check if WooCommerce is active (supports multisite)
+$active_plugins = apply_filters('active_plugins', get_option('active_plugins'));
+if (is_multisite()) {
+    $active_plugins = array_merge($active_plugins, array_keys(get_site_option('active_sitewide_plugins', [])));
+}
+if (!in_array('woocommerce/woocommerce.php', $active_plugins, true)) {
+    add_action('admin_notices', function () {
         echo '<div class="error"><p>' .
             esc_html__('Gophr Same-Day Delivery requires WooCommerce to be installed and active.', 'gophr-same-day') .
             '</p></div>';

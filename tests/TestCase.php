@@ -29,6 +29,17 @@ abstract class TestCase extends WP_UnitTestCase
         update_option('gophr_environment', 'sandbox');
         update_option('gophr_enable', 'yes');
         update_option('gophr_shipping_title', 'Gophr Same-Day Delivery');
+
+        // Set up Gophr origin settings
+        update_option('gophr_user_name', 'Test User');
+        update_option('gophr_origin_company_name', 'Test Company');
+        update_option('gophr_origin_address1', '123 Test Street');
+        update_option('gophr_origin_address2', 'Suite 100');
+        update_option('gophr_origin_city', 'London');
+        update_option('gophr_origin_postcode', 'SW1A 1AA');
+        update_option('gophr_origin_country', 'GB');
+        update_option('gophr_phone_number', '07588112233');
+        update_option('gophr_email_address', 'test@example.com');
     }
 
     protected function tearDown(): void
@@ -40,6 +51,29 @@ abstract class TestCase extends WP_UnitTestCase
         delete_option('gophr_environment');
         delete_option('gophr_enable');
         delete_option('gophr_shipping_title');
+
+        // Clean up origin settings
+        delete_option('gophr_user_name');
+        delete_option('gophr_origin_company_name');
+        delete_option('gophr_origin_address1');
+        delete_option('gophr_origin_address2');
+        delete_option('gophr_origin_city');
+        delete_option('gophr_origin_postcode');
+        delete_option('gophr_origin_country');
+        delete_option('gophr_phone_number');
+        delete_option('gophr_email_address');
+
+        // Clean up delivery options
+        delete_option('gophr_vehicle_type');
+        delete_option('gophr_pickup_proof_required');
+        delete_option('gophr_dropoff_proof_required');
+        delete_option('gophr_min_required_age');
+        delete_option('gophr_pin_required');
+        delete_option('gophr_id_check');
+        delete_option('gophr_pickup_instructions');
+        delete_option('gophr_pickup_tips');
+        delete_option('gophr_parcel_flags');
+        delete_option('gophr_cold_chain');
     }
 
     protected function create_test_product(array $args = []): WC_Product_Simple

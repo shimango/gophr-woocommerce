@@ -66,6 +66,11 @@ class Payload
         return array_filter($parcels);
     }
 
+    public static function get_fallback_option($key, $fallback_key) {
+        $value = get_option($key);
+        return $value !== '' ? $value : get_option($fallback_key);
+    }
+
     /**
      * @param array $order
      * @param array<CreateParcelRequestDto> $parcels
@@ -80,11 +85,11 @@ class Payload
             "pickup_person_name" => get_option('gophr_user_name', ''),
             "pickup_mobile_number" => get_option('gophr_phone_number', ''),
             "pickup_phone_number" => get_option('gophr_phone_number', ''),
-            "pickup_address1" => get_option('gophr_origin_address1', get_option('woocommerce_store_address')),
-            "pickup_address2" => get_option('gophr_origin_address2', get_option('woocommerce_store_address_2')),
-            "pickup_city" => get_option('gophr_origin_city', get_option('woocommerce_store_city')),
-            "pickup_postcode" => get_option('gophr_origin_postcode', get_option('woocommerce_store_postcode')),
-            "pickup_country_code" => get_option('gophr_origin_country', substr(get_option('woocommerce_default_country'), 0, 2)),
+            "pickup_address1" => self::get_fallback_option('gophr_origin_address1', 'woocommerce_store_address'),
+            "pickup_address2" => self::get_fallback_option('gophr_origin_address2', 'woocommerce_store_address_2'),
+            "pickup_city" => self::get_fallback_option('gophr_origin_city', 'woocommerce_store_city'),
+            "pickup_postcode" => self::get_fallback_option('gophr_origin_postcode', 'woocommerce_store_postcode'),
+            "pickup_country_code" => self::get_fallback_option('gophr_origin_country', 'woocommerce_default_country'),
         ];
 
         $destination = $order['destination'];

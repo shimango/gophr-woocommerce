@@ -1,3 +1,342 @@
 /**
  * Gophr Same-Day Delivery - Admin Styles
  */
+
+/* ==========================================================================
+   Settings Page Container
+   ========================================================================== */
+
+.gophr-settings-wrap {
+    max-width: 800px;
+}
+
+.gophr-settings-wrap h1 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #c3c4c7;
+    margin-bottom: 20px;
+}
+
+.gophr-settings-wrap h1::before {
+    content: '';
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #00a8e8 0%, #0077b6 100%);
+    border-radius: 6px;
+}
+
+/* ==========================================================================
+   Section Headers
+   ========================================================================== */
+
+.gophr-settings-wrap h2 {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #1d2327;
+    padding: 15px 0 10px;
+    margin: 25px 0 10px;
+    border-bottom: 2px solid #0077b6;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gophr-settings-wrap h2::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 20px;
+    background: linear-gradient(180deg, #00a8e8 0%, #0077b6 100%);
+    border-radius: 2px;
+}
+
+/* ==========================================================================
+   Form Tables
+   ========================================================================== */
+
+.gophr-settings-wrap .form-table {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.gophr-settings-wrap .form-table th {
+    padding: 20px 15px;
+    font-weight: 500;
+    color: #1d2327;
+    background: #f6f7f7;
+    border-bottom: 1px solid #c3c4c7;
+    width: 200px;
+    vertical-align: top;
+}
+
+.gophr-settings-wrap .form-table td {
+    padding: 15px;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: top;
+}
+
+.gophr-settings-wrap .form-table tr:last-child th,
+.gophr-settings-wrap .form-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* ==========================================================================
+   Form Fields - General
+   ========================================================================== */
+
+.gophr-settings-wrap input[type="text"],
+.gophr-settings-wrap input[type="email"],
+.gophr-settings-wrap input[type="tel"],
+.gophr-settings-wrap input[type="number"],
+.gophr-settings-wrap input[type="time"],
+.gophr-settings-wrap select,
+.gophr-settings-wrap textarea {
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gophr-settings-wrap input[type="text"]:focus,
+.gophr-settings-wrap input[type="email"]:focus,
+.gophr-settings-wrap input[type="tel"]:focus,
+.gophr-settings-wrap input[type="number"]:focus,
+.gophr-settings-wrap input[type="time"]:focus,
+.gophr-settings-wrap select:focus,
+.gophr-settings-wrap textarea:focus {
+    border-color: #0077b6;
+    box-shadow: 0 0 0 2px rgba(0, 119, 182, 0.15);
+    outline: none;
+}
+
+.gophr-settings-wrap input[type="text"],
+.gophr-settings-wrap input[type="email"],
+.gophr-settings-wrap input[type="tel"] {
+    min-width: 300px;
+}
+
+.gophr-settings-wrap select {
+    min-width: 200px;
+}
+
+.gophr-settings-wrap textarea {
+    width: 100%;
+    max-width: 400px;
+    min-height: 80px;
+    resize: vertical;
+}
+
+/* ==========================================================================
+   Checkboxes
+   ========================================================================== */
+
+.gophr-settings-wrap input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    vertical-align: middle;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.gophr-settings-wrap input[type="checkbox"]:checked {
+    background-color: #0077b6;
+    border-color: #0077b6;
+}
+
+.gophr-settings-wrap fieldset label {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.gophr-settings-wrap fieldset label:hover {
+    color: #0077b6;
+}
+
+/* ==========================================================================
+   Descriptions
+   ========================================================================== */
+
+.gophr-settings-wrap .description,
+.gophr-settings-wrap p.description {
+    font-size: 13px;
+    color: #646970;
+    margin-top: 8px;
+    line-height: 1.5;
+}
+
+.gophr-settings-wrap .description strong {
+    color: #1d2327;
+}
+
+/* ==========================================================================
+   Working Hours Table (nested)
+   ========================================================================== */
+
+.gophr-settings-wrap .form-table .form-table {
+    margin: 0;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+}
+
+.gophr-settings-wrap .form-table .form-table th {
+    background: transparent;
+    width: 100px;
+    font-weight: normal;
+    padding: 8px 10px 8px 0;
+    border: none;
+}
+
+.gophr-settings-wrap .form-table .form-table td {
+    padding: 8px 0;
+    border: none;
+}
+
+.gophr-settings-wrap .form-table .form-table input[type="time"] {
+    min-width: 120px;
+}
+
+/* ==========================================================================
+   WooCommerce Form Field Overrides
+   ========================================================================== */
+
+.gophr-settings-wrap .woocommerce-input-wrapper {
+    display: block;
+}
+
+.gophr-settings-wrap .woocommerce-input-wrapper .description {
+    margin-top: 8px;
+}
+
+.gophr-settings-wrap .form-row {
+    margin: 0;
+    padding: 0;
+}
+
+.gophr-settings-wrap .form-row label.checkbox {
+    display: flex;
+    align-items: center;
+    font-weight: normal;
+}
+
+/* ==========================================================================
+   Submit Button
+   ========================================================================== */
+
+.gophr-settings-wrap .submit {
+    padding: 20px 0;
+    margin-top: 10px;
+    border-top: 1px solid #c3c4c7;
+}
+
+.gophr-settings-wrap .submit .button-primary {
+    background: linear-gradient(135deg, #0077b6 0%, #005f92 100%);
+    border: none;
+    border-radius: 4px;
+    padding: 8px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    height: auto;
+    line-height: 1.5;
+    text-shadow: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.gophr-settings-wrap .submit .button-primary:hover {
+    background: linear-gradient(135deg, #005f92 0%, #004a73 100%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.gophr-settings-wrap .submit .button-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================================================
+   Settings Errors / Notices
+   ========================================================================== */
+
+.gophr-settings-wrap .notice {
+    margin: 15px 0;
+    border-left-width: 4px;
+    border-radius: 4px;
+}
+
+.gophr-settings-wrap .notice-success {
+    border-left-color: #00a32a;
+    background: #edfaef;
+}
+
+.gophr-settings-wrap .notice-error {
+    border-left-color: #d63638;
+    background: #fcf0f1;
+}
+
+/* ==========================================================================
+   Order Metabox Styles
+   ========================================================================== */
+
+.gophr-shipment-metabox {
+    padding: 5px 0;
+}
+
+.gophr-shipment-metabox p {
+    margin: 10px 0;
+}
+
+.gophr-shipment-metabox .button {
+    margin-right: 5px;
+}
+
+.gophr-shipment-metabox .button-accept {
+    background-color: #00a32a !important;
+    border-color: #00a32a !important;
+    color: #fff !important;
+}
+
+.gophr-shipment-metabox .button-accept:hover {
+    background-color: #008a20 !important;
+    border-color: #008a20 !important;
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+
+@media screen and (max-width: 782px) {
+    .gophr-settings-wrap .form-table th,
+    .gophr-settings-wrap .form-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .gophr-settings-wrap .form-table th {
+        padding-bottom: 10px;
+        border-bottom: none;
+    }
+
+    .gophr-settings-wrap .form-table td {
+        padding-top: 0;
+    }
+
+    .gophr-settings-wrap input[type="text"],
+    .gophr-settings-wrap input[type="email"],
+    .gophr-settings-wrap input[type="tel"],
+    .gophr-settings-wrap select {
+        min-width: 100%;
+        max-width: 100%;
+    }
+}

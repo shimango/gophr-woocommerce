@@ -55,7 +55,7 @@ class SettingsPage {
         }
 
         ?>
-        <div class="wrap">
+        <div class="wrap gophr-settings-wrap">
             <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
 
             <?php settings_errors('gophr_settings_group'); ?>

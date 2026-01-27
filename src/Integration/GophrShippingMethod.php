@@ -8,6 +8,10 @@ use Shimango\Gophr\Common\Configuration;
 use WC_Logger_Interface;
 use WC_Shipping_Method;
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 class GophrShippingMethod extends WC_Shipping_Method {
 
     private Client $gophrClient;

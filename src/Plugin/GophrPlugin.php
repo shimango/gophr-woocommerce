@@ -5,6 +5,10 @@ namespace Gophr\Woocommerce\Plugin;
 use Gophr\Woocommerce\Admin\SettingsPage;
 use Gophr\Woocommerce\Integration\GophrShippingMethod;
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 class GophrPlugin
 {
     /**

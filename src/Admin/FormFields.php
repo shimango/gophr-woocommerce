@@ -2,6 +2,10 @@
 
 namespace Gophr\Woocommerce\Admin;
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 class FormFields
 {
     public  static function getFields(): array

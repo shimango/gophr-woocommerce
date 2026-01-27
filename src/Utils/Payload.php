@@ -9,6 +9,10 @@ use Shimango\Gophr\DataTransferObjects\Request\Jobs\CreateJobRequestDto;
 use Shimango\Gophr\DataTransferObjects\Request\Parcels\CreateParcelRequestDto;
 use WC_Product_Simple;
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 class Payload
 {
     /**
@@ -66,7 +70,7 @@ class Payload
         return array_filter($parcels);
     }
 
-    public static function get_fallback_option($key, $fallback_key) {
+    public static function getFallbackOption($key, $fallback_key) {
         $value = get_option($key);
         return $value !== '' ? $value : get_option($fallback_key);
     }
@@ -85,11 +89,11 @@ class Payload
             "pickup_person_name" => get_option('gophr_user_name', ''),
             "pickup_mobile_number" => get_option('gophr_phone_number', ''),
             "pickup_phone_number" => get_option('gophr_phone_number', ''),
-            "pickup_address1" => self::get_fallback_option('gophr_origin_address1', 'woocommerce_store_address'),
-            "pickup_address2" => self::get_fallback_option('gophr_origin_address2', 'woocommerce_store_address_2'),
-            "pickup_city" => self::get_fallback_option('gophr_origin_city', 'woocommerce_store_city'),
-            "pickup_postcode" => self::get_fallback_option('gophr_origin_postcode', 'woocommerce_store_postcode'),
-            "pickup_country_code" => self::get_fallback_option('gophr_origin_country', 'woocommerce_default_country'),
+            "pickup_address1" => self::getFallbackOption('gophr_origin_address1', 'woocommerce_store_address'),
+            "pickup_address2" => self::getFallbackOption('gophr_origin_address2', 'woocommerce_store_address_2'),
+            "pickup_city" => self::getFallbackOption('gophr_origin_city', 'woocommerce_store_city'),
+            "pickup_postcode" => self::getFallbackOption('gophr_origin_postcode', 'woocommerce_store_postcode'),
+            "pickup_country_code" => self::getFallbackOption('gophr_origin_country', 'woocommerce_default_country'),
         ];
 
         $destination = $order['destination'];

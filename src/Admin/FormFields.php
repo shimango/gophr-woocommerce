@@ -34,7 +34,7 @@ class FormFields
             'gophr_api_key' => [
                 'title' => __('Gophr API Key', 'gophr-same-day'),
                 'type' => 'text',
-                'description' => __('Create account at book.gophr.com and request API key though live chat or email help@gophr.com.', 'gophr-same-day'),
+                'description' => __('Create account at book.gophr.com and request API key through live chat or email help@gophr.com.', 'gophr-same-day'),
                 'default' => '',
             ],
             'gophr_environment' => [
@@ -45,7 +45,7 @@ class FormFields
                     'production' => __('Production', 'gophr-same-day'),
                     'sandbox' => __('Sandbox', 'gophr-same-day'),
                 ],
-                'description' => __('Set as Test to switch to Gophr api test servers. Transaction will be treated as sample transactions by Gophr.', 'gophr-same-day')
+                'description' => __('Set as Sandbox to switch to Gophr API test servers. Transactions will be treated as sample transactions by Gophr.', 'gophr-same-day')
             ],
             'gophr_availability' => [
                 'title' => __('Availability', 'gophr-same-day'),
@@ -85,7 +85,7 @@ class FormFields
                 'default' => '',
             ],
             'gophr_origin_address2' => [
-                'title' => __('Origin Address', 'gophr-same-day'),
+                'title' => __('Origin Address Line 2', 'gophr-same-day'),
                 'type' => 'text',
                 'description' => __('Address for the <strong>sender</strong>.', 'gophr-same-day'),
                 'default' => '',
@@ -97,6 +97,7 @@ class FormFields
                 'default' => '',
             ],
             'gophr_origin_country' => [
+                'title' => __('Origin Country', 'gophr-same-day'),
                 'type' => 'single_select_country',
             ],
             'gophr_origin_postcode' => [
@@ -133,12 +134,12 @@ class FormFields
                     'shipping_address' => __('Shipping Address', 'gophr-same-day'),
                     'billing_address' => __('Billing Address', 'gophr-same-day'),
                 ],
-                'description' => __('Change the preferance of Shipping Address printed on the label.', 'gophr-same-day')
+                'description' => __('Change the preference of Shipping Address printed on the label.', 'gophr-same-day')
             ],
             'gophr_disable_shipment_tracking' => [
                 'title' => __('Shipment Tracking', 'gophr-same-day'),
                 'type' => 'select',
-                'default' => 'yes',
+                'default' => 'False',
                 'options' => [
                     'TrueForCustomer' => __('Disable for Customer', 'gophr-same-day'),
                     'False' => __('Enable', 'gophr-same-day'),

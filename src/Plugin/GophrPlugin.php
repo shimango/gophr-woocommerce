@@ -2,6 +2,7 @@
 
 namespace Gophr\Woocommerce\Plugin;
 
+use Gophr\Woocommerce\Admin\OrderMetabox;
 use Gophr\Woocommerce\Admin\SettingsPage;
 use Gophr\Woocommerce\Integration\GophrShippingMethod;
 
@@ -61,6 +62,11 @@ class GophrPlugin
         // Initialize the settings page class.
         if (class_exists(SettingsPage::class)) {
             SettingsPage::getInstance();
+        }
+
+        // Initialize the order metabox for Gophr shipment info.
+        if (class_exists(OrderMetabox::class)) {
+            OrderMetabox::getInstance();
         }
     }
 

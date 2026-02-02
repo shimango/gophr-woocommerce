@@ -37,6 +37,15 @@ final class Client
     }
 
     /**
+     * Gets the base API endpoint URL
+     * @return string The full base API endpoint URL
+     */
+    public function getBaseApiEndpoint(): string
+    {
+        return $this->configuration->getBaseUrl() . $this->configuration->getApiEndPoint();
+    }
+
+    /**
      * Gets a quote
      * @param array $jobData The job data
      * @throws GophrException

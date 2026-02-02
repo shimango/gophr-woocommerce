@@ -1,5 +1,11 @@
 # Changelog
 
+### 2.0.4
+- Get the base API URL used by the client
+
+### 2.0.3
+- Added booking method to the requests
+
 ### 2.0.2
 - Added missing properties to Job Dto
 
